@@ -10,7 +10,18 @@ Three things the Strategy is explicitly NOT optimizing for, called out in the co
 - **Not compliance posture.** `fabro.report` is not an audit artifact, not a regulated-data handling surface, not a GDPR/SOC-2/HIPAA-shaped product. The Reporter has no identity; the service has no account concept; there is nothing to be compliant *about* on the public surface.
 - **Not marketing telemetry.** `fabro.report` does not exist to measure Fabro adoption, instrument user behavior, or feed a growth funnel. Reporter identity is deliberately absent; metadata captured at upload exists to help the team fix the specific bug, not to build a dataset about who uses Fabro.
 
-The load-bearing trade: this Strategy optimizes for *the team can retrieve the Debug Bundle* over *the user sees rich diagnostics in-browser*. That single trade is what makes `fabro.report` structurally different from a full crash-report product. A Reporter's in-browser experience is intentionally minimal — a Report Metadata Page with Report ID, upload timestamp, bundle size, and a delete button, and nothing else — because richer in-browser experience is not what Strategy is buying. Strategy is buying *team access to the bundle*. Everything else is a distraction from that.
+The load-bearing trade: this Strategy optimizes for *the team can retrieve the data* over *the user sees rich diagnostics in-browser or maintains an ongoing dialog with the service*. That single trade is what makes `fabro.report` structurally different from a full crash-report product or a forum-shaped feedback product. A Reporter's in-browser experience is intentionally minimal — a Report Metadata Page with Report ID, upload timestamp, bundle size, and a delete button, and nothing else. A Feedback Submitter's post-submission experience is intentionally empty — a CLI confirmation line and nothing else. Both minimums exist because richer submitter-facing experience is not what Strategy is buying. Strategy is buying *team access to the data the team needs*. Everything else is a distraction from that.
+
+### Two Mechanisms, Same Strategic WHY
+
+As of the 2026-04-23 scope expansion, this Strategy is served by **two mechanisms**, not one. The Strategic WHY is unchanged — support effectiveness for self-hosted Fabro users, through team retrieval of the data the team needs to help — but the data arrives in two complementary shapes:
+
+- **Debug Bundles carry reproducibility data.** What happened technically: crash state, logs, stack traces, environment, configuration, whatever `fabro dump` packages up. Retrieved by Triagers directly from S3 with their own AWS credentials.
+- **Feedback carries voice.** What the user wanted to say: bug reports in the user's own words, feature requests, praise, complaints, general voice. Retrieved by the Fabro team from Discord (with optional S3 retrieval for the full submission).
+
+Both mechanisms serve the same Strategic WHY — *make it easy for the team to help self-hosted users* — by giving the team different but complementary kinds of signal. A Debug Bundle without voice tells the team what broke but not what the user wanted; voice without reproducibility data tells the team what the user wanted but not how to verify. The Strategy buys both shapes by funding both intakes; it does not fund a third mechanism (user-facing diagnostics, in-service analytics, account-based history) because none of those would increase the team's ability to help a user whose data is already in hand.
+
+The three anti-goals from the confirmed Strategic WHY — **not a formal support SLA**, **not compliance posture**, **not marketing telemetry** — apply to both mechanisms equally. Feedback is not a ticketing product any more than Debug Bundles are; the Feedback Submitter is not promised a response, does not own a case record, and does not get a queue position. IP logging on the Feedback flow (see forward-reference to `Decision - IP Logging for Abuse Protection`, manifest A18, to be drafted in Phase 3) is scoped strictly to abuse protection and basic attribution — **not** marketing telemetry, **not** cross-submission user tracking, **not** compliance audit-trail posture. The anti-goals hold.
 
 ## WHERE: Ecosystem
 
@@ -35,6 +46,11 @@ The load-bearing trade: this Strategy optimizes for *the team can retrieve the D
   - [[Agent - Reporter]] — the role this Strategy serves (self-hosted Fabro user handing off a Debug Bundle); the Reporter's narrow post-upload surface is the Strategy's concrete expression on the Reporter side of the pickup.
   - [[Agent - Triager]] — the role this Strategy exists for (Fabro team member retrieving bundles); the Triager's no-service-surface shape — retrieving directly from S3 — is the Strategy's concrete expression on the team side of the pickup.
   - [[Standard - Competitive Context]] — the one-pager closes the competitive-analysis question because no competitive-differentiation work is needed when this Strategy is the entire purpose; audiences whose intake shapes differ from self-hosted-Fabro-user retrieval are structurally outside this Strategy's scope.
+- Forward-referenced, to be drafted in Phase 3 of the 2026-04-23 feedback-scope cascade (plain-text references; no wikilinks until the cards exist):
+  - `Agent - Feedback Submitter` (manifest A15, to be drafted in Phase 3) — the persona that carries the voice mechanism. Also a self-hosted Fabro user, in the same audience [[Decision - Who This Service Is For]] locks. Feedback Submitters and Reporters overlap as populations (a given Fabro user may be both at different moments), but the roles serve Strategy through different data shapes.
+  - `System - Feedback Storage & Notification` (manifest A17, to be drafted in Phase 3) — the operational mechanism that delivers voice to the team. Discord-as-push-notification is chosen because it gets voice in front of the Fabro team with minimal service-side triage infrastructure — which is exactly what this Strategy funds: team retrieval of data, not in-service management of it.
+  - `Decision - IP Logging for Abuse Protection` (manifest A18, to be drafted in Phase 3) — the identity-data Decision that scopes IP logging on the Feedback flow to abuse protection only. Explicitly preserves the three anti-goals of this Strategy (no SLA, no compliance posture, no marketing telemetry); IP is logged for service-reliability reasons, not Strategy-extension reasons.
+  - `Decision - Fire-and-Forget Feedback` (manifest A19, to be drafted in Phase 3) — the Strategic WHY expressed in the Feedback Submitter's post-submission experience: no URL, no delete, no account. The Submitter's involvement ends at "sent" because Strategy is buying team retrieval of voice, not user-facing continued engagement.
 
 ## WHY: Belief
 
@@ -48,14 +64,17 @@ The reason this Principle is Foundation-tier rather than Amplifier-tier is that 
 
 Confirmed 2026-04-22 by the product owner, captured in the Confirmed Product Decisions section of `docs/alexandria/sources/product-vision.md` (L78). Stable. Revisions to this Principle require product-owner approval; they are not implementation details. A scope expansion proposal that implicitly revises this Principle — e.g., "let's add telemetry so we know which Fabro versions are hitting bugs most" — should be surfaced as a Strategy change, not absorbed as a feature.
 
+**2026-04-23 mechanism-set expansion:** the Strategic WHY and the three anti-goals are **unchanged** by the 2026-04-23 scope expansion. What changed is the list of mechanisms that serve this Strategy: the set grew from one (Debug Bundles) to two (Debug Bundles + Feedback). The same Strategy funds both mechanisms, by different data shapes (reproducibility data vs. voice). See `docs/alexandria/sources/feedback-flow.md` and `docs/alexandria/reviews/inventory-pass-3-feedback-scope.md` Part 1 for the scope-expansion record; Part 3 confirms Strategy is unchanged and only gains a second mechanism. Adding a **third** mechanism would require Strategy approval from the product owner; see [[Principle - Narrow Forever]]'s "no third intake type, forever" ceiling.
+
 ## HOW: Application
 
 ### What Following This Principle Looks Like
 
-- The `fabro dump --upload` (and standalone `fabro upload`) CLI together with the service make it as frictionless as possible for a self-hosted Fabro user who hit a bug to get their Debug Bundle to the Fabro team. The upload path is short; the URL is easy to share; the team can retrieve the bundle from S3 with their own AWS credentials. Each of these is justified by "team can retrieve the bundle."
-- The Report Metadata Page shows only what the Reporter needs to confirm the upload happened and to be able to delete it if they want. It does not try to be useful beyond that because usefulness to the Reporter beyond upload confirmation is not what Strategy is buying.
-- Metadata captured at upload (Fabro version, optional reporter message, arbitrary key/value tags) is exactly the metadata the team needs to triage which bundle to look at first. It is not a telemetry feed and it is not an identity system.
-- When the team wants a new capability, the first question is "does this help a team member retrieve a bundle?" If the new capability is consumed by the Reporter after upload, it is probably not what Strategy is buying and should be scrutinized.
+- The `fabro dump --upload` (and standalone `fabro upload`) CLI together with the service make it as frictionless as possible for a self-hosted Fabro user who hit a bug to get their Debug Bundle (reproducibility data) to the Fabro team. The upload path is short; the URL is easy to share; the team can retrieve the Debug Bundle from S3 with their own AWS credentials. Each of these is justified by "team can retrieve the reproducibility data."
+- The `fabro feedback` CLI makes it as frictionless as possible for a self-hosted Fabro user to get voice (bug reports, feature requests, praise, complaints, general feedback) to the Fabro team. The submission path is fire-and-forget; the Discord webhook posts the submission to a team channel; the team reads it on Discord and optionally pulls the full submission from S3. Each of these is justified by "team can retrieve the voice."
+- The Report Metadata Page shows only what the Reporter needs to confirm the upload happened and to be able to delete it if they want. `fabro feedback`'s CLI confirmation shows only what the Feedback Submitter needs to know that the submission landed. Neither surface tries to be useful beyond that because usefulness to the submitter beyond confirmation is not what Strategy is buying.
+- Metadata captured at upload (Fabro version, optional reporter message, arbitrary key/value tags) is exactly the metadata the team needs to triage which Debug Bundle to look at first. Metadata captured at Feedback submission (Fabro version / platform / arch, optional email, server-logged IP) is exactly the metadata the team needs to prioritize voice and — if abuse spikes — protect the service. Neither is a telemetry feed and neither is an identity system.
+- When the team wants a new capability, the first question is "does this help a team member retrieve reproducibility data or voice?" If the new capability is consumed by a Reporter or a Feedback Submitter after submission, it is probably not what Strategy is buying and should be scrutinized.
 
 ### What Violating This Principle Looks Like
 
@@ -69,12 +88,14 @@ Confirmed 2026-04-22 by the product owner, captured in the Confirmed Product Dec
 
 Before building or proposing any feature, ask two questions in order:
 
-1. **Does this help the Fabro team retrieve a Debug Bundle from a self-hosted Fabro user?** If yes, it may be in scope — check [[Product Thesis - Pickup Point, Not Triage Surface]] and [[Principle - Narrow Forever]]. If no, stop.
-2. **If this feature exists, is its audience a Reporter *after* upload, or the Fabro team *retrieving* a bundle?** If Reporter-after-upload, this Strategy does not fund it; the feature is trading the wrong direction and should be reconsidered. If Fabro-team-retrieving, it is a candidate for scope (still subject to Narrow Forever and the Product Thesis).
+1. **Does this help the Fabro team retrieve reproducibility data (Debug Bundles) or voice (Feedback) from a self-hosted Fabro user?** If yes, it may be in scope — check [[Product Thesis - Pickup Point, Not Triage Surface]] and [[Principle - Narrow Forever]]. If no, stop.
+2. **If this feature exists, is its audience a Reporter or Feedback Submitter *after* submission, or the Fabro team *retrieving* data?** If submitter-after-submission, this Strategy does not fund it; the feature is trading the wrong direction and should be reconsidered. If Fabro-team-retrieving, it is a candidate for scope (still subject to Narrow Forever and the Product Thesis).
 
 Any feature that fails either test is not a Strategy-funded feature. It may still be a good idea; it belongs in a different product or in Fabro's internal tooling, not here.
 
 ## Sources
 
 - `docs/alexandria/sources/product-vision.md` (L78 Strategic WHY; L52–64 Users section; L12–L14 Vision Summary; L115–128 Raven's Inferences and Open Questions — self-hosted-audience scope)
+- `docs/alexandria/sources/feedback-flow.md` (2026-04-23 — Feedback as voice-carrying second mechanism serving the same Strategic WHY; anti-goals preserved across both flows)
+- `docs/alexandria/reviews/inventory-pass-3-feedback-scope.md` (Part 1 F5 impact assessment — Strategy survives cleanly; Part 3 cascade — two-mechanism expansion)
 - `docs/alexandria/inventory/card-manifest.md` (F5 entry)

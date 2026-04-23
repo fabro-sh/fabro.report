@@ -33,7 +33,11 @@ Written 2026-04-22 per Conan's inventory recommendation (Open Flag 3 in `docs/al
 
 ### What Is Borrowed From `bun.report`
 
-- **The intake URL shape.** Upload a tarball, receive a short secret URL, share it out-of-band. That is the entire borrowed surface.
+- **The intake URL shape.** Upload a tarball, receive a short secret URL, share it out-of-band. That is the entire borrowed surface from `bun.report`-the-product.
+
+### What Is Borrowed From `bun feedback`
+
+- **The CLI-intake shape for the Feedback flow.** Added 2026-04-23 when the product expanded to two intake types. `bun feedback` — the parallel feedback command in the `bun` CLI — is the template shape for `fabro feedback`: a subcommand that accepts positional text or files or piped stdin, an optional `-e, --email <email>` flag, a fire-and-forget confirmation on success, and no post-submission surface. The borrowing is at the same layer as the `bun.report` borrowing: the **intake shape** only, nothing downstream. `bun feedback`'s internal `sendToDiscord` implementation is a pattern reference for the Discord webhook post shape in `System - Feedback Storage & Notification` (manifest A17, to be drafted in Phase 3), but the drift rejection on everything past intake still holds.
 
 ### What Is Not Borrowed From `bun.report`
 
@@ -65,4 +69,6 @@ Before citing a competitor or adjacent product as justification for a feature, a
 ## Sources
 
 - `docs/alexandria/sources/product-vision.md` (L33–L48 "What `fabro.report` Is Not"; L102–L107 "Template Relationship: `bun.report`"; L12–L14 Vision Summary — intake-only framing)
+- `docs/alexandria/sources/feedback-flow.md` (2026-04-23 — `bun feedback` as template shape for `fabro feedback`; intake-layer borrowing at parity with `bun.report`-the-URL-shape borrowing)
+- `docs/alexandria/reviews/inventory-pass-3-feedback-scope.md` (Part 3 C1 tiny update — one-sentence note on `bun feedback` template shape)
 - `docs/alexandria/inventory/card-manifest.md` (C1 entry; Open Flag 3 — Conan's recommendation to close C1 as a one-pager rather than conduct an external survey)

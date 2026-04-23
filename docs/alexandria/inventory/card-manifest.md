@@ -2,7 +2,7 @@
 
 **Job:** Conan Job 1 — Inventory
 **Date:** 2026-04-22
-**Last incremental update:** 2026-04-23 (three new Amplifier cards A12/A13/A14 added; A5/A7/A8 unblocked; build sequence extended — see Inventory Pass 2 at `docs/alexandria/reviews/inventory-pass-2-tech-stack.md`)
+**Last incremental update:** 2026-04-23 (Inventory Pass 3 — feedback scope expansion; five new cards A15–A19; identity cascade; A5 renamed — see `docs/alexandria/reviews/inventory-pass-3-feedback-scope.md`)
 **Config:** Factory × Low Novelty × Low Complexity — 22-area pool (5 Foundation / 4 Core / 9 Amplifier / 4 Deprioritized)
 **Source inputs:**
 - `docs/alexandria/alexandria-config.json`
@@ -13,9 +13,10 @@
 - `docs/alexandria/sources/storage-and-keys.md` (feeds A5)
 - `docs/alexandria/sources/cli-interaction-patterns.md` (feeds A7)
 - `docs/alexandria/sources/accessibility.md` (feeds A8)
+- `docs/alexandria/sources/feedback-flow.md` (feeds A15–A19 + cascade to F1/F2/F3/F5/F6/A2/A7/A14)
 - `docs/alexandria/reviews/product-vision-source-assessment.md` (prior candidate list, 14 cards)
 
-**Summary:** 19 cards to build (16 original + 3 added 2026-04-23). 5 Foundation, 4 Core, 10 Amplifier, 0 Deprioritized (all 4 Deprioritized areas omitted as not-needed). 2 cards remain blocked on source (C2, C3 — visual direction). 17 cards draftable from existing source (12 already drafted + ratified; 5 drafting in 2026-04-23 follow-on batch).
+**Summary:** 24 cards to build (19 prior + 5 added 2026-04-23 in Inventory Pass 3 for the feedback scope expansion). 6 Foundation, 4 Core, 14 Amplifier, 0 Deprioritized (all 4 Deprioritized areas omitted as not-needed). 2 cards remain blocked on source (C2, C3 — visual direction). 22 cards draftable from existing source.
 
 ---
 
@@ -32,20 +33,20 @@ Card type mapping to areas:
 |---|---|---|
 | 1.1 Product Vision | Product Thesis | The anchor WHY. |
 | 1.2 Product Strategy | Principle | Strategy for a service this narrow is one Principle, not a suite. |
-| 1.3 Personas / JTBD | Agent (×2) | Reporter + Triager are Agents in the library taxonomy. |
+| 1.3 Personas / JTBD | Agent (×3) | Reporter + Triager + Feedback Submitter. Triager is one role with two workflows; Reporter vs Feedback Submitter is the asymmetric-identity split added 2026-04-23. |
 | 1.4 Competitive Analysis | Standard | "What to borrow / what to skip" is a spec-shaped recurring reference. |
 | 1.5 Market Requirements | Decision | Single decision-shaped artifact: "who we're for." |
 | 2.1 Information Architecture | Standard | Trivial IA captured as a spec so it stays trivial. |
 | 2.2 Noun Vocabulary | Standard | Canonical names + definitions. |
-| 2.3 Product Entities | Component (×3) | Report, Debug Bundle, Report Metadata Page. |
-| 2.4 System Design | System (×2) | Retention, S3 layout, key scheme (A5) + Service Topology (A14, added 2026-04-23 — Fargate/Route53/IAM/Terraform). Separate change frequencies, separate concerns. |
+| 2.3 Product Entities | Component (×4) | Report, Debug Bundle, Report Metadata Page, Feedback (added 2026-04-23 in Inventory Pass 3). |
+| 2.4 System Design | System (×3) | Debug Bundle Retention, Storage, and Key Scheme (A5) + Service Topology (A14, added 2026-04-23 — Fargate/Route53/IAM/Terraform) + Feedback Storage & Notification (A17, added 2026-04-23 in Inventory Pass 3 — feedback.json/feedback.txt S3 layout + Discord webhook). Separate change frequencies, separate concerns. |
 | 3.2 Emotional / Aesthetic Goals | Principle | Tone anchor for a minimal-surface product. |
 | 3.5 Anti-Patterns | Principle | The load-bearing "not bun.report" card. (Taxonomy note: linter does not recognize "Anti-Pattern" as a canonical type, so this card is typed Principle with negative-framing language. Renamed 2026-04-22.) |
 | 4.1 Design System | Standard | Receipt-page conventions, explicit. |
 | 4.3 Prototypes / Mockups | Standard (with sketch) | Sketch + caption as a spec. |
 | 4.2 Interaction Patterns | Standard | CLI upload + delete interaction. |
 | 4.4 Accessibility Standards | Standard | Factory-mandated policy, even if minimal. |
-| 5.1 Key Decisions Log | Decision (×5) | Five confirmed decisions worth individual cards: Capability URLs over Auth (A9), No Content Dedup (A10), 30-Day Retention Default (A11), Service Stack (A12 — Rust/Fargate, added 2026-04-23), Sentry for Service Errors Not Bundle Processing (A13 — added 2026-04-23). |
+| 5.1 Key Decisions Log | Decision (×7) | Seven confirmed decisions worth individual cards: Capability URLs over Auth (A9), No Content Dedup (A10), 30-Day Retention Default (A11), Service Stack (A12 — Rust/Fargate, added 2026-04-23), Sentry for Service Errors Not Bundle Processing (A13 — added 2026-04-23), IP Logging for Abuse Protection (A18 — added 2026-04-23 in Inventory Pass 3), Fire-and-Forget Feedback (A19 — added 2026-04-23 in Inventory Pass 3). |
 | 5.2+5.4 Institutional Memory | — | Empty at start; accumulates over time. No card yet. |
 | 5.3 Roadmap | Principle | "Narrow forever" — Roadmap for this product is a commitment, not a plan. |
 
@@ -91,7 +92,7 @@ Build after Core. Several Amplifier areas collapse into single cards or pair wit
 | A2 | `Agent - Triager` | Agent | 1.3 | `/product/` | 12 | EXISTS | Thin persona card. Fabro team member; uses own AWS credentials; never touches intake service. |
 | A3 | `Component - Report` | Component | 2.3 | `/product/` | 13 | EXISTS | The upload event and its public identity. Links to Noun Vocabulary (F2). |
 | A4 | `Component - Report Metadata Page` | Component | 2.3 | `/product/` | 14 | EXISTS | The one-page receipt at the URL. Links to Design System (C2) once it exists. |
-| A5 | `System - Retention, Storage, and Key Scheme` | System | 2.4 | `/product/` | 15 | EXISTS (as of 2026-04-23 via `storage-and-keys.md`) | 30-day expiration via S3 lifecycle rule; date-partitioned keys `<YYYY>/<MM>/<DD>/<id>/`; sidecar JSON metadata at `<id>/metadata.json`; bundle at `<id>/bundle.tar.gz`; 32-hex-char Report IDs (128 bits entropy); bucket `fabro-report-bundles` (env-overridable), region `us-east-1` (env-overridable). |
+| A5 | `System - Debug Bundle Retention, Storage, and Key Scheme` | System | 2.4 | `/product/` | 15 | EXISTS (as of 2026-04-23 via `storage-and-keys.md`) | **RENAMED 2026-04-23 from `System - Retention, Storage, and Key Scheme`** — filename move deferred to Phase 2 (manifest row reflects the target name; wikilinks + on-disk filename cascade in Phase 2 so A17's parallel `System - Feedback Storage & Notification` naming pattern is visible at filename level). 30-day expiration via S3 lifecycle rule; date-partitioned keys `<YYYY>/<MM>/<DD>/<id>/`; sidecar JSON metadata at `<id>/metadata.json`; bundle at `<id>/bundle.tar.gz`; 32-hex-char Report IDs (128 bits entropy); bucket `fabro-report-bundles` (env-overridable), region `us-east-1` (env-overridable). |
 | A6 | `Standard - Information Architecture` | Standard | 2.1 | `/rationale/` | 16 | EXISTS | Minimal IA: one page, one URL per Report, delete-on-URL. Captured so it stays minimal. |
 | A7 | `Standard - Interaction Patterns (CLI + Delete)` | Standard | 4.2 | `/rationale/` | 17 | EXISTS (as of 2026-04-23 via `cli-interaction-patterns.md`) | `fabro dump --upload` / `fabro upload --dry-run` (renamed from `fabro report` 2026-04-23); presigned S3 URLs so bytes never flow through service; progress bar; `NO_COLOR`-aware colored errors; client-side delete confirmation; 50MB cap. |
 | A8 | `Standard - Accessibility Policy` | Standard | 4.4 | `/rationale/` | 18 | EXISTS (as of 2026-04-23 via `accessibility.md`) | WCAG 2.2 AA for Report Metadata Page; `NO_COLOR` for CLI; keyboard + screen-reader HTML best practices; `/ui` skill workflow note for page implementation. |
@@ -101,6 +102,11 @@ Build after Core. Several Amplifier areas collapse into single cards or pair wit
 | A12 | `Decision - Service Stack` | Decision | 5.1 | `/rationale/` | 22 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Rust on AWS Fargate, Docker image, Terraform-provisioned. Rejects Bun/Fly (bun.report template) and Rust/Fly (Fabro's deployment model). Chosen for AWS-native IAM-role-based S3 access. Added 2026-04-23. |
 | A13 | `Decision - Sentry for Service Errors, Not Bundle Processing` | Decision | 5.1 | `/rationale/` | 23 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Distinguishes Sentry-as-service-error-tracker (chosen) from Sentry-as-downstream-bundle-processor (rejected by F3). Pairs with an inline clarifying note in F3. Added 2026-04-23. |
 | A14 | `System - Service Topology` | System | 2.4 | `/product/` | 24 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Fargate task, Route53 DNS (`fabro.report` registered), S3 bucket, IAM role, Terraform-provisioned. Separate from A5 (data topology) — different change frequencies, different concerns. Added 2026-04-23. |
+| A15 | `Agent - Feedback Submitter` | Agent | 1.3 | `/product/` | 25 | EXISTS (feedback-flow.md) | Persona card, parallel to A1 Reporter. Identity model: optional email + server-logged IP + Fabro version metadata. No post-submission interaction (no URL, no delete). Added 2026-04-23 in Inventory Pass 3. |
+| A16 | `Component - Feedback` | Component | 2.3 | `/product/` | 26 | EXISTS (feedback-flow.md) | First-class entity, parallel to A3 Report. UUIDv7 ID, message text, file attachments manifest, optional email, IP, Fabro version/platform/arch, timestamp, retention deadline. Added 2026-04-23 in Inventory Pass 3. |
+| A17 | `System - Feedback Storage & Notification` | System | 2.4 | `/product/` | 27 | EXISTS (feedback-flow.md) | Parallel to A5 for Debug Bundles. Covers: `feedback.json` + `feedback.txt` S3 layout under `feedback/<YYYY>/<MM>/<DD>/<uuidv7>/`, Discord webhook posting with component-v2 payload shape, failure self-reporting. Absorbs the Discord-webhook rationale inline (see Open Flag 6). Added 2026-04-23 in Inventory Pass 3. |
+| A18 | `Decision - IP Logging for Abuse Protection` | Decision | 5.1 | `/rationale/` | 28 | EXISTS (feedback-flow.md) | First identity-data capture in the library. Why IPs are logged, scope of use (abuse protection + basic attribution only — no analytics, no cross-submission tracking), retention (same 30 days). Thin Decision, parallel in shape to A10. Added 2026-04-23 in Inventory Pass 3. |
+| A19 | `Decision - Fire-and-Forget Feedback` | Decision | 5.1 | `/rationale/` | 29 | EXISTS (feedback-flow.md) | Why feedback returns no URL, has no delete, and has no capability-URL model. Pairs with A9 (capability URLs for Debug Bundles) as the inverse decision for the other flow. Thin Decision. Added 2026-04-23 in Inventory Pass 3. |
 
 **Deferred Amplifier area:**
 
@@ -178,6 +184,25 @@ After the 12 cards ratified through commit `3b4fd06`, and after the CLI rename c
 
 C2 and C3 remain blocked on visual direction.
 
+## Inventory Pass 3 Follow-On Build Sequence (2026-04-23)
+
+Phased cascade for the feedback scope expansion. Phase boundaries are cascade-safety boundaries: identity lands before product layer; existing-card retrofits land before new cards so new cards link into a stable graph.
+
+| Order | Card | Depends On |
+|---|---|---|
+| 25 | Phase 1 cascade (F1, F3, F4, F5, F6) — identity edits | Existing F1/F3/F4/F5/F6 cards ratified |
+| 26 | Phase 1 cascade (F2) — add nouns + CLI row | After identity edits |
+| 27 | Phase 2 cascade (A1, A3, A5 rename, A9, A11, A13 — tiny updates + A5 filename move) | After Foundation cascade |
+| 28 | Phase 2 cascade (A2, A6, A7, A8, A14 — medium updates) | After tiny updates |
+| 29 | Phase 3 — A15 `Agent - Feedback Submitter` | F2 updated |
+| 30 | Phase 3 — A16 `Component - Feedback` | F2 updated; A15 drafted |
+| 31 | Phase 3 — A17 `System - Feedback Storage & Notification` | A16 drafted; A14 updated |
+| 32 | Phase 3 — A18 `Decision - IP Logging for Abuse Protection` | A17 drafted |
+| 33 | Phase 3 — A19 `Decision - Fire-and-Forget Feedback` | A16 drafted; A9 updated |
+| 34 | Phase 4 — C1 tiny update (`bun feedback` template note) | Independent; pairs anywhere |
+
+C2 and C3 remain blocked on visual direction.
+
 ---
 
 ## Blocked Cards
@@ -202,6 +227,7 @@ These warnings are structural properties of this library at its current scale, n
 |---|---|---|---|
 | `sweep4.missing_containment` on `Component - Report` | A3 | No Section/Template/Governance card exists in this library. A Section card here would duplicate F1's framing or be a thin stub; a separate Domain card is not load-bearing for a 16-card intake-service library. F1 operates as the de facto container for every product-layer card. Revisit if the library grows past ~30 cards. | Conan, 2026-04-23 (`docs/alexandria/reviews/batch-c1-a3-a4-a6-spot-check.md`) |
 | `sweep4.missing_containment` on `Component - Report Metadata Page` | A4 | Same rationale as A3 — the product-layer cards in this library use F1 as their de facto structural anchor. | Conan, 2026-04-23 |
+| `sweep4.missing_containment` on `Component - Feedback` | A16 | Same rationale as A3 and A4 — this library uses F1 as the de facto container for all product-layer cards. Pre-adjudicated in Inventory Pass 3 so it does not re-surface during spot-check. | Conan, 2026-04-23 (`docs/alexandria/reviews/inventory-pass-3-feedback-scope.md` Part 4) |
 | `sweep4.underpopulated_layer` on `experience/` | library-wide | Manifest deliberately deprioritizes all Experience-layer areas (3.1 User Journey Maps, 3.3 Engagement Loops, 3.4 Progression / Mastery). Zero Experience cards is a positive design choice for a narrow intake service, not an omission. | Conan, 2026-04-23 |
 | `sweep2.word_count` (currently 20 instances) | library-wide | Every card exceeds the 700-word soft cap because each card is calibrated for standalone Factory-mode agent readability. Compression would undermine that property. Accepted in every prior spot-check (F1-F6, Decisions, Agents, this batch). | Conan across all spot-checks |
 
@@ -215,7 +241,9 @@ Future linter runs should treat these as known-accepted, not re-flag as new drif
 2. **Zone paths.** Proposed `/rationale/`, `/product/`, `/experience/` based on standard Alexandria conventions. The repo has no existing library cards to pattern-match against. If your project convention differs, flag and Conan will re-emit.
 3. **C1 scope.** "Short survey of paste services / support-bundle uploaders" may be disproportionate effort for this product's size. Conan's recommendation: skip the external survey; make C1 a one-page card that states "bun.report is our template for intake shape only; no other competitor analysis is load-bearing at this scale" and close the area.
 4. **Institutional Memory (5.2+5.4).** No card planned now. Revisit after first Health Check or first Decision reversal.
-5. **Two Agents in area 1.3.** Config allocates one Amplifier slot to "User Personas / JTBD." Splitting into Agent - Reporter and Agent - Triager produces two cards. Both are thin. If you prefer one card (`Agent - Personas`), collapse — Conan recommends two because the asymmetry (no-identity Reporter vs credentialed Triager) is load-bearing and deserves separate framing.
+5. **Two Agents in area 1.3.** Config allocates one Amplifier slot to "User Personas / JTBD." Splitting into Agent - Reporter and Agent - Triager produces two cards. Both are thin. If you prefer one card (`Agent - Personas`), collapse — Conan recommends two because the asymmetry (no-identity Reporter vs credentialed Triager) is load-bearing and deserves separate framing. **Update 2026-04-23:** Inventory Pass 3 adds a third Agent, `Agent - Feedback Submitter` (A15), for the same reason — asymmetric identity vs Reporter (optional email + server-logged IP vs. no identity at all).
+6. **Discord webhook Decision absorbed into A17.** Conan recommends no standalone `Decision - Discord Webhook for Feedback Notification` card; the rationale (why Discord, what gets posted, how failures self-report) lives inside `System - Feedback Storage & Notification` (A17) as the notification section, with a cross-reference from F3's clarifying note. If the human wants it as a standalone Decision, promote to A20 — this flag is the place that reopens.
+7. **F6 identity-line rewrite.** The "narrow forever" identity sentence in F6 changes *shape*, not just prose, in Phase 1 of the 2026-04-23 cascade. New identity: "exactly two intake types (Debug Bundles + Feedback), forever." Flagged so the Phase 1 spot-check verifies the rewrite didn't narrow or broaden the commitment unintentionally — in particular, the "no third intake type, forever" identity-level ceiling must be visibly preserved and every prior load-bearing phrase ("narrow forever", "intake-only", "pickup point", "permanently out-of-scope") must survive intact.
 
 ---
 
