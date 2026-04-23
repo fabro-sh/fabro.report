@@ -68,7 +68,7 @@ Build after Foundation. These enrich the Foundation frame with structure and con
 
 | # | Card | Type | Area | Zone | Build Order | Source Status | Intent |
 |---|------|------|------|------|-------------|---------------|--------|
-| C1 | `Standard - Competitive Context: What to Borrow, What to Skip` | Standard | 1.4 | `/rationale/` | 7 | PARTIAL | bun.report as template; paste services + support-bundle uploaders as analogues. Source has the bun.report comparison in triplicate; lacks an actual survey of paste services / support-bundle patterns. |
+| C1 | `Standard - Competitive Context` | Standard | 1.4 | `/rationale/` | 7 | EXISTS (closed as one-pager per Conan Open Flag 3; filename short form, subtitle "What to Borrow, What to Skip" lives inside the card) | bun.report as template; paste services + support-bundle uploaders named-to-close, not surveyed. Ratified 2026-04-23. |
 | C2 | `Standard - Design System (Receipt Page + CLI Output)` | Standard | 4.1 | `/rationale/` | 8 | ABSENT | Typography, spacing, color, copy conventions for receipt page. CLI output conventions. Source has no visual direction. |
 | C3 | `Standard - Receipt Page Sketch` | Standard | 4.3 | `/rationale/` | 9 | ABSENT | One-page sketch with labels. Source describes the page content but not its layout. |
 | C4 | `Decision - Who This Service Is For` | Decision | 1.5 | `/rationale/` | 10 | EXISTS | Self-hosted Fabro users, primary and only. Hosted-Fabro bundles are explicitly deferred. Source has this — just needs to be a proper Decision card. |
@@ -169,6 +169,21 @@ Then F4 (blocked on tone source), then Core tier.
 | A8 `Standard - Accessibility Policy` | Floor not specified | Bryan confirms "WCAG AA + NO_COLOR" is the floor or provides alternative. |
 
 **Claim the build is not blocked on these.** Sam can draft 14 of 16 cards today. The 7 blocked cards are Amplifier/Core tier; they wait their turn regardless.
+
+---
+
+## Accepted Lint Warnings
+
+These warnings are structural properties of this library at its current scale, not defects to fix. They are expected to persist and should not be re-surfaced as new drift in future builds.
+
+| Warning | Scope | Rationale | Adjudicated |
+|---|---|---|---|
+| `sweep4.missing_containment` on `Component - Report` | A3 | No Section/Template/Governance card exists in this library. A Section card here would duplicate F1's framing or be a thin stub; a separate Domain card is not load-bearing for a 16-card intake-service library. F1 operates as the de facto container for every product-layer card. Revisit if the library grows past ~30 cards. | Conan, 2026-04-23 (`docs/alexandria/reviews/batch-c1-a3-a4-a6-spot-check.md`) |
+| `sweep4.missing_containment` on `Component - Report Metadata Page` | A4 | Same rationale as A3 — the product-layer cards in this library use F1 as their de facto structural anchor. | Conan, 2026-04-23 |
+| `sweep4.underpopulated_layer` on `experience/` | library-wide | Manifest deliberately deprioritizes all Experience-layer areas (3.1 User Journey Maps, 3.3 Engagement Loops, 3.4 Progression / Mastery). Zero Experience cards is a positive design choice for a narrow intake service, not an omission. | Conan, 2026-04-23 |
+| `sweep2.word_count` (currently 20 instances) | library-wide | Every card exceeds the 700-word soft cap because each card is calibrated for standalone Factory-mode agent readability. Compression would undermine that property. Accepted in every prior spot-check (F1-F6, Decisions, Agents, this batch). | Conan across all spot-checks |
+
+Future linter runs should treat these as known-accepted, not re-flag as new drift. If a new warning of these shapes appears on a new card, adjudicate it on its own merits rather than treating it as a default-accept.
 
 ---
 

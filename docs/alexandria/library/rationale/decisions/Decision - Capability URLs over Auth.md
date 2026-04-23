@@ -22,9 +22,11 @@ The load-bearing phrasing is *the URL is the whole access-control mechanism*. An
   - [[Decision - No Content Dedup]] — that Decision cites the absence of Reporter identity (established here) as the reason per-Reporter dedup is not an option; no identity means no per-Reporter scoping for any purpose.
   - [[Agent - Reporter]] — the capability URL returned by `fabro report` is the Reporter's entire access surface to the service after upload; there is no login, no "my uploads" view, no recovery flow — the Reporter role as written is the role-layer expression of this Decision.
   - [[Agent - Triager]] — Triagers do not "unlock" the Debug Bundle through the URL; they use AWS IAM for S3 retrieval and URL possession only to optionally delete a Report on the Reporter's request. The Triager role's no-service-auth shape is the team-side expression of this Decision.
+  - [[Component - Report]] — the Report's ID and URL are the capability-bearing values; that Component inherits this Decision for its access semantics and carries the URL-is-capability property as a structural field.
+  - [[Component - Report Metadata Page]] — the rendered surface addressed by the capability URL; implements view + delete on URL possession alone, with no second factor.
+  - [[Standard - Competitive Context]] — enumerates per-user accounts / per-team scoping as features explicitly not borrowed from `bun.report`; this Decision is the upstream access-model commitment that closes that borrowing vector.
+  - [[Standard - Information Architecture]] — the IA Standard names URL possession as coextensive with the product's access model and routable surface; this Decision is the access-model half of that IA commitment.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Component - Report` (manifest A3) — the Report's ID and URL are the capability-bearing values; A3 will inherit this Decision for its access semantics.
-  - `Component - Report Metadata Page` (manifest A4) — the rendered surface addressed by the capability URL; must implement view + delete on URL possession alone.
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — the key scheme must produce URLs whose capability is non-guessable (sufficient entropy that brute-forcing URLs is infeasible); the key-scheme decisions inherit from this access model.
 
 ## WHY: Rationale

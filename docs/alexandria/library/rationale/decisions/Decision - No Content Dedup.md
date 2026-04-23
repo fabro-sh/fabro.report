@@ -18,8 +18,10 @@ The load-bearing phrasing is *no content hash, no content identity, no coalescin
 - Related:
   - [[Product Thesis - Pickup Point, Not Triage Surface]] — a pickup point does not analyze what was dropped. Hashing a Debug Bundle to compare it to prior uploads is a form of light content analysis; even if the result is used only for dedup and never surfaced, the service would be looking inside the bundle in a way the pickup-point thesis refuses.
   - [[Principle - Reject Like bun.report Drift]] — dedup proposals can arrive disguised as operational improvements ("let's save S3 costs on repeat uploads"); this Decision is the upstream commitment those proposals have to overturn, and the rejection is not a close call.
+- Referenced by:
+  - [[Component - Report]] — the Report is a per-upload identity, not a per-content identity; the Component card inherits this Decision for its identity semantics and explicitly refuses content-hash or canonical-bundle fields on the Report.
+  - [[Component - Report Metadata Page]] — the page explicitly does not show symbolicated stacks, rendered logs, or any content-derived information; this Decision is the upstream commitment that makes "no content inspection" a structural property rather than an implementation choice.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Component - Report` (manifest A3) — the Report is a per-upload identity, not a per-content identity; A3 inherits this Decision for its identity semantics.
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — the storage layout assumes one Debug Bundle per Report; A5 does not need to model content-identity or reference counts.
 
 ## WHY: Rationale

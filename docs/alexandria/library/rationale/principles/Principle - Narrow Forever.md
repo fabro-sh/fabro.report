@@ -23,6 +23,10 @@ This Principle exists because "narrow" is a word that decays. Every software pro
   - [[Decision - 30-Day Retention Default]] — retention flexibility (per-Report overrides, retention tiers, indefinite retention) extends this Principle's logic to a new drift shape beyond the enumerated nine. Legitimate under the "list can grow" clause; the Decision locks retention as a single product-owner-adjustable number so the drift has no toehold.
   - [[Agent - Reporter]] — Reporter-facing scope expansion (accounts, "my uploads" views, post-upload feedback, in-browser bundle viewing) is on the permanently-out-of-scope list; the Reporter role as written is the Reporter role forever under this Principle.
   - [[Agent - Triager]] — Triager-facing UI (dashboards, per-team scoping, listing endpoints, any in-service triage surface) is the single most load-bearing permanently-out-of-scope item; the Triager role's "never interacts with the intake service itself" shape is the structural commitment this Principle exists to defend.
+  - [[Component - Report]] — Report-field expansion (mutable state, investigation status, ACL, owner ID, content hash) is a scope question under this Principle, not an implementation question; the Component card's closed field list is a direct expression of narrow-forever on the data model.
+  - [[Component - Report Metadata Page]] — page-content expansion (extra fields, tabs, sections, navigation) is on this Principle's permanently-out-of-scope list; the Component card's four-element structural contract is the page-layer expression of narrow-forever.
+  - [[Standard - Competitive Context]] — re-surveying competitors to find "features worth adding" is itself a drift-shaped activity under this Principle; the one-pager closes the competitive-analysis question rather than opening it.
+  - [[Standard - Information Architecture]] — IA growth (home pages, listings, per-user views, team dashboards, browse endpoints) is on this Principle's permanently-out-of-scope list; the IA Standard is the page-and-route-layer expression of narrow-forever.
 
 ## WHY: Belief
 

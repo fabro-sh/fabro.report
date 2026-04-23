@@ -31,6 +31,7 @@ The load-bearing trade: this Strategy optimizes for *the team can retrieve the D
   - [[Decision - 30-Day Retention Default]] — retention is calibrated to the realistic triage window for a self-hosted-support workflow, which is the retrieval shape Strategy is optimizing for.
   - [[Agent - Reporter]] — the role this Strategy serves (self-hosted Fabro user handing off a Debug Bundle); the Reporter's narrow post-upload surface is the Strategy's concrete expression on the Reporter side of the pickup.
   - [[Agent - Triager]] — the role this Strategy exists for (Fabro team member retrieving bundles); the Triager's no-service-surface shape — retrieving directly from S3 — is the Strategy's concrete expression on the team side of the pickup.
+  - [[Standard - Competitive Context]] — the one-pager closes the competitive-analysis question because no competitive-differentiation work is needed when this Strategy is the entire purpose; audiences whose intake shapes differ from self-hosted-Fabro-user retrieval are structurally outside this Strategy's scope.
 
 ## WHY: Belief
 

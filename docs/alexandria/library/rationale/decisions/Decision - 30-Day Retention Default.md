@@ -19,9 +19,11 @@ The load-bearing phrasing is *30 days, same for every Report, Reporter-immutable
 - Related:
   - [[Product Thesis - Pickup Point, Not Triage Surface]] — a pickup point is a temporary handoff location, not a permanent repository. Retention is structural to the thesis: a pickup that never expires becomes an archive, and an archive is a different product category entirely.
   - [[Principle - Reject Like bun.report Drift]] — proposals for retention flexibility often arrive disguised ("Triagers need more time for some bundles," "let Reporters pin important bundles"). F3 names retention-extension as a drift shape; this Decision is the upstream commitment F3 rejects against.
+- Referenced by:
+  - [[Component - Report]] — the Report carries a retention deadline computed as upload timestamp plus 30 days; the Component card inherits this Decision for the deadline's default value and the Reporter-immutable commitment.
+  - [[Component - Report Metadata Page]] — during the retention window the page renders on request; at the deadline the Report and its Debug Bundle are deleted and the URL resolves as not-found, with no rendered expired state.
+  - [[Standard - Information Architecture]] — A6 captures the "expired Report returns not-found" shape as an IA-layer commitment; this Decision is the retention policy that produces the not-found state, and together they refuse a rendered expired / deleted tombstone page.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Component - Report` (manifest A3) — the Report carries a retention deadline; A3 inherits this Decision for the deadline's default value.
-  - `Component - Report Metadata Page` (manifest A4) — the page may display the retention deadline as part of the metadata receipt; the value displayed inherits from this Decision.
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — this System is the mechanism that enforces the 30-day rule (via S3 lifecycle rules, cron, or application-side scheduling — mechanism deferred to A5; policy is here).
 
 ## WHY: Rationale

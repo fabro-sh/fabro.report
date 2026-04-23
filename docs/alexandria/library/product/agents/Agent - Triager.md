@@ -21,8 +21,11 @@ A **Triager** is a member of the Fabro team (currently Bryan + team) who retriev
   - [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] — the product exists for the Triager's benefit: the Fabro team can help self-hosted users only if the team can retrieve the Debug Bundle, and the Triager is the team member doing the retrieving. Strategy is optimizing for the Triager's access to the bundle, not the Triager's experience on any service. Those two things are deliberately different.
 - Audience commitment:
   - [[Decision - Who This Service Is For]] — the audience is self-hosted Fabro users (Reporter side); the Triager side is the Fabro team as it exists today, currently Bryan + team, with no role hierarchy or Triager subtypes. Widening the Triager definition (e.g., to third-party support partners, or to hosted-Fabro team members if that offering ever exists) is an audience change under that Decision, not an implementation change here.
+- Referenced by:
+  - [[Component - Report]] — the Report carries the ID a Triager copies out of the shared URL to locate the Debug Bundle in S3. The Report's URL is the capability for view + delete on the Metadata Page (Triager's incidental use); the Report ID alone — extracted from the URL — is what the Triager uses against S3 with their own AWS credentials.
+  - [[Component - Report Metadata Page]] — the only surface the Triager ever touches on the service, and only incidentally (to click delete when a Reporter shares the URL and asks for deletion). Any Triager-specific capability on this page is a violation of the no-service-surface shape defined here.
+  - [[Standard - Information Architecture]] — A6 captures the commitment that the Triager does not traverse the service's IA at all; Triager-side aggregation is done with `aws` tooling against the S3 bucket, not through any endpoint on this service.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Component - Report` (manifest A3) — the Report carries the ID a Triager copies out of the shared URL to locate the Debug Bundle in S3.
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — the S3 key layout determines how a Triager translates a Report ID from a URL into an S3 path for retrieval; the key scheme is the only structural contract between this service and the Triager's retrieval path.
 
 ## WHY: Rationale

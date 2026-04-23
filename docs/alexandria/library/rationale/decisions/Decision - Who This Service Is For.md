@@ -23,6 +23,7 @@ The load-bearing phrasing is *self-hosted, primary and only*. "Self-hosted" name
   - [[Decision - 30-Day Retention Default]] — the 30-day retention window is calibrated to a self-hosted-support workflow; an audience change under this Decision could require revisiting the retention number.
   - [[Agent - Reporter]] — inherits the self-hosted-only audience from this Decision; the Reporter role as written describes a Fabro user running Fabro on their own systems, not a hosted-Fabro user or a generic "anyone with a Debug Bundle" Reporter.
   - [[Agent - Triager]] — the Triager's retrieval model (own AWS credentials, direct S3 access) is also tied to the self-hosted audience shape; widening the Triager definition (e.g., to third-party support partners, or to hosted-Fabro team members) is an audience change under this Decision.
+  - [[Standard - Competitive Context]] — the competitive-analysis one-pager scopes comparisons to the self-hosted-Fabro-user audience named here; adjacent products serving different populations (managed offerings, crash-report SaaS, file-sharing services) are structurally unhelpful comparisons because their optimization targets differ.
 
 ## WHY: Rationale
 

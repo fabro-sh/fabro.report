@@ -26,8 +26,10 @@ Counter-thesis: "The URL is already in the user's hands, so the service might as
   - [[Decision - 30-Day Retention Default]] — a pickup point is a temporary handoff location; retention is structural to the thesis, and the Decision names the duration.
   - [[Agent - Reporter]] — the drop-off endpoint of the pickup; interacts with the service only via `fabro report` CLI and optionally the Report Metadata Page. The Reporter's narrow shape is the thesis expressed at the role layer on the upload side.
   - [[Agent - Triager]] — the pickup endpoint; retrieves the Debug Bundle from S3 with their own AWS credentials and never interacts with the intake service. The Triager's no-service-surface shape is the structural condition that makes "pickup, not triage" coherent.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Domain - fabro.report Intake Service` (manifest A3/A4 context) — the single product domain that will embody this thesis.
+  - [[Component - Report]] — the first-class entity created when the pickup succeeds; the Report is what "the URL exists" means in this thesis, and its authoritative field set is calibrated to "confirm a Debug Bundle arrived and let the Reporter delete it" — nothing that would serve a triage workflow.
+  - [[Component - Report Metadata Page]] — the one rendered surface the thesis allows; its four-element content (ID, upload timestamp, bundle size, delete button) is the exact measurable signal this thesis's Validation Criteria names.
+  - [[Standard - Competitive Context]] — the competitive-analysis one-pager that closes the "should we survey adjacent products?" question by citing this thesis; the thesis is what makes the borrowing stop at intake shape.
+  - [[Standard - Information Architecture]] — the IA Standard that expresses the thesis's minimal surface as an explicit spec: one CLI subcommand, one rendered page per Report, no navigation, no hierarchy.
 - Template reference:
   - `bun.report` at `~/p/oven-sh/bun.report` — borrowed for intake URL shape only, explicitly NOT used as a template for downstream processing, rendering, symbolication, feedback, or triage UI.
 

@@ -23,9 +23,11 @@ A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro report` 
   - [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] — the Reporter's narrow interaction shape is calibrated to the Strategy. Every design choice on the Reporter-facing surface is a trade between "team can retrieve the Debug Bundle more easily" and "Reporter sees a richer surface," and the Strategy ranks the first strictly above the second.
 - Scope commitment:
   - [[Principle - Narrow Forever]] — Reporter-facing scope expansion (accounts, "my uploads" views, post-upload feedback, in-browser bundle viewing) is permanently out-of-scope; the Reporter role described here is the Reporter role forever.
+- Referenced by:
+  - [[Component - Report]] — the upload event the Reporter creates when they run `fabro report`; carries the URL they share and the authoritative field list the Reporter contributes to (Fabro version, optional message, metadata tags).
+  - [[Component - Report Metadata Page]] — the one-page surface at the returned URL that the Reporter may optionally visit; carries the delete button they may optionally use.
+  - [[Standard - Information Architecture]] — A6 describes the Reporter's IA traversal as "run `fabro report`, optionally visit the Report's URL once or twice." Reporters do not browse and do not navigate; the IA is the commitment that preserves that.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Component - Report` (manifest A3) — the upload event the Reporter creates when they run `fabro report`; carries the URL they share.
-  - `Component - Report Metadata Page` (manifest A4) — the one-page surface at the returned URL that the Reporter may optionally visit; carries the delete button they may optionally use.
   - `Standard - Interaction Patterns (CLI + Delete)` (manifest A7) — the `fabro report` CLI UX specifics (progress indicator, error surface, success output) the Reporter actually experiences.
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
 
