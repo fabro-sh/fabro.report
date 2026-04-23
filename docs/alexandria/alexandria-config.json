@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-22T20:10:00Z",
+  "inputs": {
+    "mode": "factory",
+    "novelty": "low",
+    "complexity": "low"
+  },
+  "pool_size": 22,
+  "distribution": {
+    "foundation": 5,
+    "core": 4,
+    "amplifier": 9,
+    "deprioritized": 4
+  },
+  "areas": [
+    { "id": "1.1", "name": "Product Vision", "domain": "Vision & Strategy", "tier": "foundation" },
+    { "id": "1.2", "name": "Product Strategy", "domain": "Vision & Strategy", "tier": "foundation" },
+    { "id": "1.3", "name": "User Personas / JTBD", "domain": "Vision & Strategy", "tier": "amplifier" },
+    { "id": "1.4", "name": "Competitive Analysis", "domain": "Vision & Strategy", "tier": "core" },
+    { "id": "1.5", "name": "Market Requirements", "domain": "Vision & Strategy", "tier": "core" },
+    { "id": "2.1", "name": "Information Architecture", "domain": "Architecture & Nouns", "tier": "amplifier" },
+    { "id": "2.2", "name": "Noun Vocabulary", "domain": "Architecture & Nouns", "tier": "foundation" },
+    { "id": "2.3", "name": "Product Entities", "domain": "Architecture & Nouns", "tier": "amplifier" },
+    { "id": "2.4", "name": "System Design", "domain": "Architecture & Nouns", "tier": "amplifier" },
+    { "id": "2.5", "name": "Full GDD / PRD", "domain": "Architecture & Nouns", "tier": "deprioritized" },
+    { "id": "3.1", "name": "User Journey Maps", "domain": "Experience & Feel", "tier": "deprioritized" },
+    { "id": "3.2", "name": "Emotional / Aesthetic Goals", "domain": "Experience & Feel", "tier": "foundation" },
+    { "id": "3.3", "name": "Engagement Loops", "domain": "Experience & Feel", "tier": "deprioritized" },
+    { "id": "3.4", "name": "Progression / Mastery", "domain": "Experience & Feel", "tier": "deprioritized" },
+    { "id": "3.5", "name": "Anti-Patterns", "domain": "Experience & Feel", "tier": "foundation" },
+    { "id": "4.1", "name": "Design System", "domain": "Visual & Interaction", "tier": "core" },
+    { "id": "4.2", "name": "Interaction Patterns", "domain": "Visual & Interaction", "tier": "amplifier" },
+    { "id": "4.3", "name": "Prototypes / Mockups", "domain": "Visual & Interaction", "tier": "core" },
+    { "id": "4.4", "name": "Accessibility Standards", "domain": "Visual & Interaction", "tier": "amplifier" },
+    { "id": "5.1", "name": "Key Decisions Log", "domain": "Decision History", "tier": "amplifier" },
+    { "id": "5.2+5.4", "name": "Institutional Memory", "domain": "Decision History", "tier": "amplifier" },
+    { "id": "5.3", "name": "Roadmap", "domain": "Decision History", "tier": "amplifier" }
+  ],
+  "discovery": {
+    "scan_date": "2026-04-22T20:10:00Z",
+    "scan_tiers": [],
+    "source": "conversation",
+    "notes": "Project is greenfield — no code in fabro.report repo yet. Entities below were elicited and confirmed through the initialize conversation with Bryan, cross-referenced against bun.report (template) and the fabro monorepo (domain context).",
+    "confirmed_entities": [
+      {
+        "name": "Report",
+        "domain": "Architecture & Nouns",
+        "annotation": "The upload event and its public identity. Fields: ID, URL, upload timestamp, bundle size, optional reporter message, Fabro version, arbitrary key/value metadata, retention deadline (default 30d). Delete capability is tied to URL possession.",
+        "confidence": "high",
+        "evidence": ["conversation"]
+      },
+      {
+        "name": "Debug Bundle",
+        "domain": "Architecture & Nouns",
+        "annotation": "Compressed tarball produced by `fabro debug`. Stored in S3, never served publicly. Payload structure is out of scope for this library — owned by the `fabro debug` command in the main Fabro repo.",
+        "confidence": "high",
+        "evidence": ["conversation"]
+      },
+      {
+        "name": "Reporter",
+        "domain": "Architecture & Nouns",
+        "annotation": "Whoever ran `fabro report`. No identity, no login. Identified only by Fabro version metadata captured at upload.",
+        "confidence": "high",
+        "evidence": ["conversation"]
+      },
+      {
+        "name": "Triager",
+        "domain": "Architecture & Nouns",
+        "annotation": "Fabro team members (Bryan + team) who retrieve bundles for bug investigation. Access bundles via direct S3 access using their own credentials. Never interact with the intake service itself.",
+        "confidence": "high",
+        "evidence": ["conversation"]
+      },
+      {
+        "name": "Report Metadata Page",
+        "domain": "Architecture & Nouns",
+        "annotation": "The minimal landing page at the returned URL. Shows ID / upload timestamp / bundle size and a delete button. Does NOT expose bundle contents — that security decision is deliberate.",
+        "confidence": "high",
+        "evidence": ["conversation"]
+      }
+    ],
+    "rejected_entities": []
+  },
+  "context": {
+    "product_summary": "fabro.report is a debug-bundle intake service for users of the Fabro product (an AI workflow orchestration platform at ~/p/fabro-sh/fabro). Users run `fabro report`, which uploads a compressed tarball to S3 and returns a URL. The Fabro team triages bugs by retrieving bundles directly from S3.",
+    "template_reference": "~/p/oven-sh/bun.report — stated as a shape template, but scope is narrower: no symbolication, no Sentry integration, no bundle rendering, no feedback collection. Only the intake + secret-URL pattern is borrowed.",
+    "parent_product": "~/p/fabro-sh/fabro — Rust monorepo, AI-powered workflow orchestration, workflows defined as Graphviz graphs.",
+    "security_model": "Capability URLs — knowledge of the URL grants the ability to view metadata and delete the report. No authentication on the public surface.",
+    "retention": "30-day default expiration.",
+    "dedup": "Disabled by design — bundles expire anyway.",
+    "headless_caveat": "User described this as 'headless' but confirmed a minimal 1-page metadata receipt exists at each Report URL. Effectively near-headless, not literally."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "getalexandria": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/bhelmkamp/p/fabro-sh/fabro.report/.claude/plugins/alexandria"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "alexandria@getalexandria": true
+  }
+}
