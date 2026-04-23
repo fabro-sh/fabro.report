@@ -22,8 +22,10 @@ The canonical name, definition, and common-mistake list for every first-class en
   - [[Component - Report Metadata Page]] — uses this exact page name, never shortened to "Metadata Page," "Receipt Page," "Landing Page," "Status Page," or "Dashboard." The Component card's visible-field set is drawn from this Standard's Report entry.
   - [[Standard - Competitive Context]] — the not-borrowed list uses the canonical nouns (Report, Debug Bundle, Reporter, Triager, Report Metadata Page) to name what `fabro.report` will not import from `bun.report` or adjacent categories; vocabulary drift into `bun.report`'s nouns is one of the earliest drift symptoms this Standard calls out.
   - [[Standard - Information Architecture]] — the IA Standard uses these canonical names exactly — the page is the Report Metadata Page; the URL addresses a Report; the CLI uploads a Debug Bundle. The IA's one-CLI-one-page vocabulary is coextensive with this Standard.
-- Conforming forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted — each must use these exact terms when drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — must use "Debug Bundle" for the tarball; not "Payload," "Archive," "Dump."
+- Conforming references (each uses these exact terms):
+  - [[System - Retention, Storage, and Key Scheme]] — uses "Debug Bundle" for the tarball (not "Payload," "Archive," "Dump") and "Report" for the upload event with its sidecar metadata; the S3 key scheme and URL shape preserve the canonical vocabulary.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the card that owns the CLI UX; inherits the canonical command names from the "Canonical CLI Commands" subsection below and expands them with flags, progress, error, and delete mechanics.
+  - [[Standard - Accessibility Policy]] — uses "Report Metadata Page" in heading and `<title>` copy, "Delete Report" on the button, and the canonical nouns in any ARIA labels.
 - Provenance:
   - `docs/alexandria/alexandria-config.json` → `discovery.confirmed_entities` — authoritative mirror. This card and the config must remain identical by design. Any drift between the two is a defect in one of them; treat this card as authoritative for card-authoring and the config as authoritative for tooling, and reconcile.
 
@@ -43,17 +45,29 @@ Established 2026-04-22, alongside [[Product Thesis - Pickup Point, Not Triage Su
 
 | Canonical Name        | Short Definition                                                                                                                                 | Authoritative Fields / Distinctions                                                                                                                                                                                      |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Report                | The upload event and its public identity. Created when `fabro report` successfully uploads a Debug Bundle to S3.                                  | Fields: ID, URL, upload timestamp, bundle size, optional reporter message, Fabro version, arbitrary key/value metadata tags, retention deadline (default 30 days). Delete capability is tied to URL possession.           |
-| Debug Bundle          | The compressed tarball produced by `fabro debug` and uploaded by `fabro report`. Stored in S3, never served publicly.                             | Internal structure is owned by the `fabro debug` command in the main Fabro repo and is out of scope for this library. The service treats a Debug Bundle as an opaque blob with a size.                                    |
-| Reporter              | Whoever ran `fabro report`. Has no identity on the service — no account, no login, no user record.                                                | Identified only by Fabro version metadata captured at upload time. May optionally attach a short message via a CLI flag. Expected to share the URL out-of-band (GitHub, Slack, email).                                   |
+| Report                | The upload event and its public identity. Created when `fabro dump --upload` (or `fabro upload` against a previously-dumped tarball) successfully uploads a Debug Bundle to S3. | Fields: ID, URL, upload timestamp, bundle size, optional reporter message, Fabro version, arbitrary key/value metadata tags, retention deadline (default 30 days). Delete capability is tied to URL possession.           |
+| Debug Bundle          | The compressed tarball produced by `fabro dump` and uploaded by `fabro dump --upload` or `fabro upload`. Stored in S3, never served publicly.     | Internal structure is owned by the `fabro dump` command in the main Fabro repo and is out of scope for this library. The service treats a Debug Bundle as an opaque blob with a size.                                    |
+| Reporter              | Whoever ran `fabro dump --upload` (or `fabro upload`). Has no identity on the service — no account, no login, no user record.                     | Identified only by Fabro version metadata captured at upload time. May optionally attach a short message via a CLI flag. Expected to share the URL out-of-band (GitHub, Slack, email).                                   |
 | Triager               | A member of the Fabro team who retrieves Debug Bundles for bug investigation. Currently Bryan + team.                                             | **Never interacts with the intake service itself.** Retrieves bundles directly from S3 using their own AWS credentials. The service has no Triager-facing surface.                                                        |
 | Report Metadata Page  | The minimal one-page landing page at a Report's URL. Shows Report ID, upload timestamp, bundle size, and a delete button. Does not expose contents.| The service's only rendered surface. Capability-URL addressed (possession of URL grants view + delete). Never displays Debug Bundle contents; never exposes Reporter identity (there isn't one).                          |
 
+### Canonical CLI Commands
+
+The CLI surface is owned by [[Standard - Interaction Patterns (CLI + Delete)]]. This Standard does not specify flags, error shapes, or UX detail. It does, however, anchor the **canonical command names** so no downstream card invents or regresses them. Confirmed 2026-04-23:
+
+| Command                  | Purpose                                                                                                   |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `fabro dump`             | Produces a Debug Bundle tarball locally. Does not upload.                                                 |
+| `fabro dump --upload`    | Produces a Debug Bundle AND uploads it in one step. Returns the Report URL on success. Reporter's primary path. |
+| `fabro upload`           | Uploads a previously-dumped Debug Bundle tarball. Supports `--dry-run` to verify the upload path without transferring bytes. |
+
+The pre-2026-04-23 names `fabro debug` (bundle producer) and `fabro report` (uploader) are **superseded**. The product domain `fabro.report` and the noun "Report" are unchanged — only the verbs a Reporter types changed.
+
 ### Usage Rules
 
-1. Use the exact canonical name as written above — same capitalization, same wording. "Report" is distinct from "report" (the latter is a CLI subcommand, a verb, or the general noun).
+1. Use the exact canonical name as written above — same capitalization, same wording. "Report" is the noun (the upload event and its public identity); it is distinct from the general English word "report" and is not a CLI subcommand name in this product. The CLI commands are `fabro dump`, `fabro dump --upload`, and `fabro upload` (see HOW below for canonical definitions).
 2. Use "Report" for the upload event / public identity. Use "Debug Bundle" for the tarball itself. A Report contains a reference to a Debug Bundle; they are not synonyms.
-3. Use "Reporter" only for someone who has run `fabro report`. Do not use "Reporter" to mean a Fabro user who has not yet encountered a bug or has not yet uploaded — there is no pre-Reporter state in this product.
+3. Use "Reporter" only for someone who has run `fabro dump --upload` or `fabro upload`. Do not use "Reporter" to mean a Fabro user who has not yet encountered a bug or has not yet uploaded — there is no pre-Reporter state in this product.
 4. Use "Triager" only for Fabro team members retrieving bundles. Do not use "Triager" to mean a Reporter who is also debugging their own issue — the Triager role is about S3 retrieval, not about who is investigating.
 5. Use "Report Metadata Page" for the service's rendered surface. Do not shorten to "Metadata Page," "Receipt," or "Landing Page" in cards, docs, or log lines; shortening invites synonym drift.
 

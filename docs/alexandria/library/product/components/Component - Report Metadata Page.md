@@ -27,15 +27,16 @@ This card is a **structural** Component card, not a visual one. It describes wha
 - Roles in the interaction:
   - [[Agent - Reporter]] — may optionally visit the page to confirm upload details or delete the Report. The Reporter's Example 2 in the Agent card (deletion after sharing the URL and changing their mind) is exactly the interaction this page supports.
   - [[Agent - Triager]] — may incidentally click delete if a Reporter shares the URL with them and asks for deletion (see Agent - Triager's Example 2). The Triager's delete action uses URL possession as its authorization, the same way any other visitor's would; there is no Triager-specific capability on this page. Triagers do not *use* this page for triage in any other way.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
+- UX, accessibility, and mechanism:
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the delete confirmation flow on this page: client-side confirmation (`confirm()` or a custom modal), authorization via URL possession, and the register for any confirmation copy. The presence of a delete button is structural (this card); the confirmation flow around it is the Interaction Patterns card's concern.
+  - [[Standard - Accessibility Policy]] — accessibility floor for this page (WCAG 2.2 AA, keyboard-first operation, semantic HTML, screen-reader support, delete-confirmation accessibility). Structural content is set here; accessibility constraints are set there.
+  - [[System - Retention, Storage, and Key Scheme]] — the URL shape this page is served at (`fabro.report/r/<32-hex-chars>`) and the S3 lifecycle mechanism that removes the page from service when a Report expires. Policy is in the Decisions cited above; mechanism is in A5.
+- Forward references (not yet drafted):
   - `Standard - Design System` (manifest C2) — visual direction for this page: typography, color, layout, spacing, page chrome. **Blocked** on source material from the product owner. This Component card deliberately does not anticipate the visual choices; it states structure, and the visual card will state appearance.
-  - `Standard - Interaction Patterns (CLI + Delete)` (manifest A7) — the delete confirmation flow on this page: one click or two, copy on the confirmation step, the result state after deletion. **Blocked** on source material from the product owner. The presence of a delete button is structural; the confirmation flow around it is the Interaction Patterns card's concern.
-  - `Standard - Accessibility Policy` (manifest A8) — accessibility floor for this page (contrast, keyboard navigation, screen reader labels, focus behavior on the delete flow). **Blocked** on source material from the product owner. Structural content is set here; accessibility constraints will be set there.
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the URL shape this page is served at (host, path, slug layout), and the mechanism that removes the page from service when a Report expires. Policy is in the Decisions cited above; mechanism is in A5.
 
 ## WHY: Rationale
 
-The Report Metadata Page exists because the pickup-point thesis needs exactly one confirmation surface on the web side — the Reporter closes `fabro report`, pastes the URL somewhere, and wants to be able to click the URL once to confirm the upload really landed and to delete it if they change their mind. Without the page, the Reporter has only the CLI output and the silence of a shared URL; with the page, they have a one-click confirmation that the handoff succeeded and a one-click undo if they need it. That is the load-bearing job of the page: *confirmation of a handoff, with an exit ramp*. Nothing more.
+The Report Metadata Page exists because the pickup-point thesis needs exactly one confirmation surface on the web side — the Reporter closes `fabro dump --upload`, pastes the URL somewhere, and wants to be able to click the URL once to confirm the upload really landed and to delete it if they change their mind. Without the page, the Reporter has only the CLI output and the silence of a shared URL; with the page, they have a one-click confirmation that the handoff succeeded and a one-click undo if they need it. That is the load-bearing job of the page: *confirmation of a handoff, with an exit ramp*. Nothing more.
 
 The reason the page is *only* structural and not full-specified in this card is that the visual register is governed by a separate Design System card (C2), which is blocked on product-owner input. Writing this card without visual direction means the structural contract (four elements, no more; URL-possession auth; expired-Reports return not-found) is locked down and ready for implementation, while the appearance remains a separate, open question. Running ahead on appearance before the product owner provides direction would produce a rendered page that silently became the visual precedent; deferring is the correct posture. The deferral is explicit here so a future agent opening this card does not assume the visual direction is in play just because the structure is.
 
@@ -54,7 +55,7 @@ The Report Metadata Page renders exactly four elements, in the visual arrangemen
 1. **Report ID** — the Report's internal identifier, as carried by [[Component - Report]]. Displayed so the Reporter can recognize the Report they just uploaded, and so a Triager can read it off the page and use it to locate the Debug Bundle in S3. The Report ID is not rendered as a clickable link to anything; it is a label on the page.
 2. **Upload timestamp** — the moment of successful upload, per [[Component - Report]]. Displayed in a format the Reporter can read (exact format deferred to the Design System card). Not editable.
 3. **Bundle size** — the byte size of the uploaded Debug Bundle, per [[Component - Report]]. Displayed in a human-readable unit (exact format deferred to the Design System card). Not editable.
-4. **Delete button** — triggers the delete action authorized by URL possession. Copy on the button and the confirmation flow around it is deferred to `Standard - Interaction Patterns (CLI + Delete)` (manifest A7), with the tonal register inherited from [[Principle - Minimal Public Surface Feels Calm]].
+4. **Delete button** — triggers the delete action authorized by URL possession. Copy on the button and the confirmation flow around it is deferred to [[Standard - Interaction Patterns (CLI + Delete)]], with the tonal register inherited from [[Principle - Minimal Public Surface Feels Calm]] and the accessibility floor from [[Standard - Accessibility Policy]].
 
 No other elements appear on the page. There is no navigation, no footer links beyond what the Design System card may specify for compliance or legal (that is a C2 question), no breadcrumbs, no related-Reports list, no "your other uploads" list.
 
@@ -78,7 +79,7 @@ Access to the page is governed by [[Decision - Capability URLs over Auth]]. In p
 - No session cookie, no login step, no access-check on the render path beyond "can the request reach this URL."
 - The delete button submits a delete action that requires no additional authentication; possession of the URL is the authorization. See [[Decision - Capability URLs over Auth]] "Following This Decision" for the load-bearing phrasing.
 - There is no "only the original Reporter can delete" concept; the product cannot distinguish the original Reporter from anyone else in URL possession, and this is named as a cost (not a bug) in [[Decision - Capability URLs over Auth]] "What It Costs."
-- URL entropy (the property that makes capability URLs non-guessable) is a structural requirement on the URL / key scheme; see `System - Retention, Storage, and Key Scheme` (manifest A5, not yet drafted).
+- URL entropy (the property that makes capability URLs non-guessable) is a structural requirement on the URL / key scheme; see [[System - Retention, Storage, and Key Scheme]] (32 hex characters = 128 bits).
 
 ### Expired-Report Behavior
 
@@ -110,9 +111,9 @@ Tone consistency between the CLI (which carries the same register) and this page
 ### Deferred to Other Cards
 
 - **Visual direction** — `Standard - Design System` (manifest C2). Typography, color, layout, spacing, page chrome. Blocked on product-owner input.
-- **Delete confirmation flow** — `Standard - Interaction Patterns (CLI + Delete)` (manifest A7). One click or two; confirmation copy; success / error states. Blocked on product-owner input.
-- **Accessibility** — `Standard - Accessibility Policy` (manifest A8). Contrast, keyboard navigation, focus behavior, screen-reader labels. Blocked on product-owner input.
-- **URL shape** — `System - Retention, Storage, and Key Scheme` (manifest A5). The path at which the page is served, the key-to-path mapping, and the entropy properties of the URL. Blocked on product-owner input (mechanism).
+- **Delete confirmation flow** — [[Standard - Interaction Patterns (CLI + Delete)]]. Client-side confirmation; authorization by URL possession; register inherited from [[Principle - Minimal Public Surface Feels Calm]].
+- **Accessibility** — [[Standard - Accessibility Policy]]. WCAG 2.2 AA, keyboard-first operation, semantic HTML, screen-reader behavior, focus handling on the delete confirmation.
+- **URL shape** — [[System - Retention, Storage, and Key Scheme]]. `fabro.report/r/<32-hex-chars>`, 128 bits of entropy, served from a per-Report S3 prefix.
 
 The structural contract in this card is sufficient for a Conan review of the page's shape. Implementation requires the deferred cards to resolve first, or interim decisions from the product owner.
 

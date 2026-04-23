@@ -24,6 +24,7 @@ Reject the specific drift pattern that occurs when a Factory-mode agent is told 
   - [[Component - Report Metadata Page]] — the single most named drift shape in this Principle is page enrichment (bundle-contents tab, symbolicated stack render, feedback prompt, team-assignment status); the Component card's four-element content and expired-returns-not-found shape are the structural commitment those rejections rely on.
   - [[Standard - Competitive Context]] — the competitive-analysis one-pager that mirrors this Principle's drift list at the competitor-survey layer; the not-borrowed list in C1 is the positive-frame anchor of F3's negative-frame enumeration.
   - [[Standard - Information Architecture]] — IA growth (dashboards, listings, filters, nav, second rendered pages) is a specific drift vector this Principle enumerates; the IA Standard is the upstream minimal-IA commitment that closes the "add a route" escape hatch feature by feature.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — interaction-layer drift (post-upload feedback prompts, symbolication-status views in CLI output, content-hash dedup signals) is a shape this Principle rejects; A7's mechanics are the interaction-layer expression of the rejection list.
 - Template being misread:
   - `bun.report` at `~/p/oven-sh/bun.report` — the product this drift borrows from. Only the intake URL shape is borrowed. Every feature listed in the Drift Examples section below exists in `bun.report` and must not be copied into `fabro.report`.
 - Contrast with:
@@ -66,9 +67,9 @@ Each example below is a real drift risk implied by the `bun.report` template. Al
 ### What This Principle Does Not Forbid
 
 - Better error messages during upload, clearer failure modes, a crisper URL format, friendlier CLI copy. These help the Reporter hand off a bundle and are in scope.
-- Operational improvements invisible to Reporters: retention enforcement, S3 key layout, deletion semantics, metrics for the Fabro team's own monitoring. These are `System - Retention, Storage, and Key Scheme` (manifest A5, not yet drafted) concerns, not surface-expansion.
+- Operational improvements invisible to Reporters: retention enforcement, S3 key layout, deletion semantics, metrics for the Fabro team's own monitoring. These are [[System - Retention, Storage, and Key Scheme]] concerns, not surface-expansion.
 - Adding metadata fields captured at upload time (arbitrary key/value tags already exist for this). This is explicitly allowed by the product decisions and does not expand the public surface.
-- Improvements to the `fabro debug` command in the parent Fabro repo. Bundle structure is owned there; that work is not drift and not in this library's scope.
+- Improvements to the `fabro dump` command in the parent Fabro repo. Bundle structure is owned there; that work is not drift and not in this library's scope.
 
 ### Test
 

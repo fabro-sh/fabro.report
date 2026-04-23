@@ -2,7 +2,7 @@
 
 ## WHAT: The Choice
 
-`fabro.report` serves **Reporters who are self-hosted Fabro users — primary and only.** A Reporter in scope is someone running Fabro on their own systems who hits a bug, runs `fabro report`, and uploads a Debug Bundle. Bundles produced by users of any future hosted-Fabro offering are **out of scope under this Decision**; if hosted-Fabro ever needs bundle intake, that is a separate product question, not a scope expansion of `fabro.report`. This Decision formalizes the audience commitment that was confirmed by the product owner on 2026-04-22 as part of the Strategic WHY.
+`fabro.report` serves **Reporters who are self-hosted Fabro users — primary and only.** A Reporter in scope is someone running Fabro on their own systems who hits a bug, runs `fabro dump --upload` (or `fabro upload` against a previously-dumped tarball), and uploads a Debug Bundle. Bundles produced by users of any future hosted-Fabro offering are **out of scope under this Decision**; if hosted-Fabro ever needs bundle intake, that is a separate product question, not a scope expansion of `fabro.report`. This Decision formalizes the audience commitment that was confirmed by the product owner on 2026-04-22 as part of the Strategic WHY.
 
 The load-bearing phrasing is *self-hosted, primary and only*. "Self-hosted" names the audience the Strategic WHY optimizes for. "Primary and only" closes the escape hatch that would otherwise read this as "self-hosted is the initial target and we'll add others later," which would turn every hosted-Fabro-shaped feature request into an implementation discussion rather than a Strategy change.
 
@@ -57,7 +57,7 @@ This Decision is not locked forever — but the lock is lifted only by a deliber
 
 1. The product owner explicitly reopens the audience as a Strategy question, in writing, in a source-material update to `docs/alexandria/sources/product-vision.md`. (An informal mention in passing does not count.)
 2. A hosted-Fabro offering has been announced or shipped, and the product owner decides that its bundle intake should land in `fabro.report` rather than in a purpose-built hosted intake product. That is a Strategy change, not a scope expansion; this Decision is the thing it changes.
-3. A systematic pattern of self-hosted Reporters failing to retrieve bundles to the Fabro team surfaces, and the root cause turns out to be an audience-scope mismatch (e.g., self-hosted deployments have fundamentally different bundle-production mechanics than `fabro report` assumes). This would be an invalidation signal for [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] itself, at which point this Decision is revisited as a downstream consequence.
+3. A systematic pattern of self-hosted Reporters failing to retrieve bundles to the Fabro team surfaces, and the root cause turns out to be an audience-scope mismatch (e.g., self-hosted deployments have fundamentally different bundle-production mechanics than `fabro dump` assumes). This would be an invalidation signal for [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] itself, at which point this Decision is revisited as a downstream consequence.
 
 None of those conditions exist today. This Decision is stable and expected to remain so.
 

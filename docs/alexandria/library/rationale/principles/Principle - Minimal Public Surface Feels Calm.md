@@ -2,7 +2,7 @@
 
 ## WHAT: The Principle
 
-The emotional goal for `fabro.report` is that a Reporter who runs `fabro report` and receives a URL feels **efficient and reassured** — and that the rest of the product's public surface (error messages, the Report Metadata Page, any retention or expiration notification that ever exists) inherits that same register. Those two words are the load-bearing tone anchor and they are paired on purpose.
+The emotional goal for `fabro.report` is that a Reporter who runs `fabro dump --upload` and receives a URL feels **efficient and reassured** — and that the rest of the product's public surface (error messages, the Report Metadata Page, any retention or expiration notification that ever exists) inherits that same register. Those two words are the load-bearing tone anchor and they are paired on purpose.
 
 - **Efficient** means no wasted lines, no ceremony, no "we are pleased to inform you" prose. The CLI returns what the Reporter needs to share the URL and nothing that delays them. Success output is compact. Error output is compact. Progress output is compact.
 - **Reassured** means the Reporter closes the terminal confident that the upload landed, the URL works, and the Debug Bundle will be there when the Fabro team goes to retrieve it. Silent ambiguity is worse than a small amount of confirmation; a bare URL on stdout with no framing is *not* what this Principle asks for.
@@ -16,7 +16,7 @@ The tone register is **warm / conversational**, calibrated against the `bun` CLI
 - Implements:
   - [[Product Thesis - Pickup Point, Not Triage Surface]] — this Principle is the tonal expression of the pickup-point thesis. A pickup point should *feel* like a pickup point: a Reporter drops a Debug Bundle, gets a URL back, and leaves. The emotional shape of "efficient and reassured" is exactly what a pickup-point interaction should feel like when the Reporter closes the terminal.
 - Paired with:
-  - [[Principle - Reject Like bun.report Drift]] — tone drift is a vector for `bun.report` drift. `bun.report` has a chattier, more web-product voice ("We've received your crash report!") because it is a chattier, more web-product-shaped product. If success copy for `fabro report` starts reading like that, the drift is tonal but it is still a drift, and F3 rejects it on the same grounds it rejects feature-shape drift. Tone drift is not a separate failure mode from feature-shape drift; it is the earliest one.
+  - [[Principle - Reject Like bun.report Drift]] — tone drift is a vector for `bun.report` drift. `bun.report` has a chattier, more web-product voice ("We've received your crash report!") because it is a chattier, more web-product-shaped product. If success copy for `fabro dump --upload` starts reading like that, the drift is tonal but it is still a drift, and F3 rejects it on the same grounds it rejects feature-shape drift. Tone drift is not a separate failure mode from feature-shape drift; it is the earliest one.
   - [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] — warmth must serve team retrieval. A Reporter who feels *efficient and reassured* pastes the URL into the right place and returns to work, which is how the Fabro team gets the Debug Bundle. Warmth that slows the handoff — effusive success messages, post-upload feedback prompts, chatty follow-ups — trades Reporter-facing polish against team-retrieval effort, in the exact direction [[Principle - Strategy Support Effectiveness for Self-Hosted Users]] explicitly rejects.
   - [[Principle - Narrow Forever]] — "minimal public surface" is the structural condition this Principle depends on. Calm is cheap when the surface is a CLI plus one page. Calm is expensive when the surface is a CLI, a page, a dashboard, a feedback flow, and a team triage UI. Every feature kept off the public surface under [[Principle - Narrow Forever]] is a feature whose tone does not have to be designed, defended, or kept consistent with the rest. The narrow-forever commitment is what makes this Principle sustainable.
 - Vocabulary:
@@ -26,11 +26,12 @@ The tone register is **warm / conversational**, calibrated against the `bun` CLI
 - Referenced by:
   - [[Decision - No Content Dedup]] — dedup would add an invisible operational mode (hash computation, collision handling, reference counting) whose existence undermines the "calm is cheap" structural condition this Principle depends on; the Decision refuses that surface area.
   - [[Decision - 30-Day Retention Default]] — any retention-expiration notification that ever exists inherits this Principle's register and must not offer agency the Reporter does not have; the Decision defers any such copy to this Principle.
-  - [[Agent - Reporter]] — the Reporter is the audience of every user-facing string this Principle governs; "efficient and reassured" is calibrated specifically to the Reporter's emotional state (already frustrated by the bug that sent them to `fabro report`) as described in that Agent card.
+  - [[Agent - Reporter]] — the Reporter is the audience of every user-facing string this Principle governs; "efficient and reassured" is calibrated specifically to the Reporter's emotional state (already frustrated by the bug that sent them to `fabro dump --upload`) as described in that Agent card.
   - [[Component - Report Metadata Page]] — must carry the same register as the CLI. Not a starker aesthetic, not a warmer one. Visual direction for the page belongs in a Core-tier card (manifest C2), but tone consistency with this Principle is non-negotiable. Every user-facing string on that page — field labels, delete button copy, delete confirmation flow, any state copy during the delete action — inherits this Principle's register.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Amplifier - CLI UX Mechanics` (manifest A7) — progress indicator shape, delete confirmation flow, failure retry behavior. Must render the register this Principle specifies.
-  - `Amplifier - Accessibility` (manifest A8) — screen reader behavior, `NO_COLOR` support, color contrast. Tone choices that depend on color or symbols must degrade gracefully; the register must survive accessibility accommodations.
+- Surfaces governed:
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — progress indicator shape, delete confirmation flow, error-register specifics. Must render the register this Principle specifies; A7 is the concrete expression of "efficient and reassured" at the interaction-mechanic layer.
+  - [[Standard - Accessibility Policy]] — screen reader behavior, `NO_COLOR` support, color contrast. Tone choices that depend on color or symbols must degrade gracefully; the register survives accessibility accommodations precisely because it is carried by word choice rather than color.
+- Forward references (not yet drafted):
   - `Standard - CLI Copy` or equivalent product-layer spec for exact success / error / progress strings. Exact strings are downstream; the register they must match lives here.
 
 ## WHY: Belief
@@ -53,7 +54,7 @@ This card is Foundation-tier because every downstream user-facing surface inheri
 
 ### The Register, In Concrete Terms
 
-- **Success output is compact and confirms.** A successful `fabro report` prints enough to make clear the upload landed and enough to share — at minimum a confirmation line and the URL. It does not print zero lines (silent success is ambiguous; see source L44). It does not print a paragraph.
+- **Success output is compact and confirms.** A successful `fabro dump --upload` (or `fabro upload`) prints enough to make clear the upload landed and enough to share — at minimum a confirmation line and the URL. It does not print zero lines (silent success is ambiguous; see source L44). It does not print a paragraph.
 - **Error output is compact and actionable.** A failed upload tells the Reporter what happened and what to do next. No blame. No stack traces on the happy-path surface. No "please try again later" filler. If retry is the answer, say retry.
 - **Progress output clarifies state.** A slow upload gets a progress indicator — a spinner, a byte counter, a percentage, whatever `bun`-style restraint allows. Not decorative animation. Not ASCII art.
 - **Symbols are sparse.** A checkmark where it genuinely marks success. An indicator where it genuinely marks failure. Not sparkle. Not emoji-as-decoration. If a string reads the same with the symbol removed, the symbol is probably noise.
@@ -69,7 +70,7 @@ Every user-facing string on this product inherits this register, not just the su
 - **The Report Metadata Page.** The page at a Report's URL inherits the CLI's register. Not starker, not warmer. If the CLI is warm/conversational and the page is a Spartan table of metadata, the two do not match and the Reporter's experience breaks on the handoff from terminal to browser. Structural direction for the page lives in [[Component - Report Metadata Page]]; visual direction lives in a Core-tier card (manifest C2, not yet drafted); *tonal* direction is here, and all three must stay aligned.
 - **Retention expiration messaging (if any ever exists).** The 30-day retention deadline is a product decision. Whether the product ever notifies Reporters near expiration is a product decision too, and one [[Principle - Narrow Forever]] leans against — but if any such surface ever exists, its copy inherits this register. No formal-support-SLA voice ("Your retention window is approaching expiration; please take action."), no marketing voice ("Your Report is about to expire — renew it now!"). Plain warmth.
 - **Delete confirmations.** The Report Metadata Page has a delete button. Its confirmation flow is user-facing copy. Same register.
-- **Any copy on CLI install or setup for the `report` subcommand.** If the Fabro binary prints anything about `fabro report` during install, that copy is in scope for this Principle too.
+- **Any copy on CLI install or setup for the `dump` / `upload` subcommands.** If the Fabro binary prints anything about `fabro dump`, `fabro dump --upload`, or `fabro upload` during install, that copy is in scope for this Principle too.
 
 ### What Tone Drift Looks Like
 
@@ -90,7 +91,7 @@ When in doubt about how a given CLI string should feel, run `bun` and compare.
 - `bun install` on a project with a resolution error — direct error message, names the problem, suggests an action, no blame prose.
 - `bun run dev` — progress indicators, state changes rendered without ceremony.
 
-A draft CLI string for `fabro report` that reads in the same register as equivalent `bun` output is probably calibrated. A draft that reads warmer (more adjectives, more gratitude, more apology) is drifting toward `bun.report`'s web-product voice. A draft that reads colder (more status codes, more silence, more minimalism) is drifting toward terse-and-cold. Adjust until it matches `bun`.
+A draft CLI string for `fabro dump --upload` (or `fabro upload`) that reads in the same register as equivalent `bun` output is probably calibrated. A draft that reads warmer (more adjectives, more gratitude, more apology) is drifting toward `bun.report`'s web-product voice. A draft that reads colder (more status codes, more silence, more minimalism) is drifting toward terse-and-cold. Adjust until it matches `bun`.
 
 ### Decision Heuristic
 

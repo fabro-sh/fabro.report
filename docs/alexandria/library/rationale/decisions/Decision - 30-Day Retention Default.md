@@ -23,8 +23,8 @@ The load-bearing phrasing is *30 days, same for every Report, Reporter-immutable
   - [[Component - Report]] — the Report carries a retention deadline computed as upload timestamp plus 30 days; the Component card inherits this Decision for the deadline's default value and the Reporter-immutable commitment.
   - [[Component - Report Metadata Page]] — during the retention window the page renders on request; at the deadline the Report and its Debug Bundle are deleted and the URL resolves as not-found, with no rendered expired state.
   - [[Standard - Information Architecture]] — A6 captures the "expired Report returns not-found" shape as an IA-layer commitment; this Decision is the retention policy that produces the not-found state, and together they refuse a rendered expired / deleted tombstone page.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — this System is the mechanism that enforces the 30-day rule (via S3 lifecycle rules, cron, or application-side scheduling — mechanism deferred to A5; policy is here).
+- Implemented by:
+  - [[System - Retention, Storage, and Key Scheme]] — this System is the mechanism that enforces the 30-day rule. Terraform-declared S3 lifecycle rule (`expiration.days = 30`) runs server-side inside S3; no cron, no application-side sweeper.
 
 ## WHY: Rationale
 
@@ -46,10 +46,10 @@ The Reporter-immutable aspect is load-bearing. Letting Reporters pick retention 
 
 ### What It Costs
 
-- **Some bundles will expire before triage completes.** If a Triager is out, or the Report sits in a triage queue longer than 30 days, the Debug Bundle is gone before the Triager gets to it. The mitigation is the Reporter running `fabro report` again if asked; the bundle can be regenerated from the same buggy environment. The cost is accepted because the alternative — longer retention — costs more in holding posture than re-uploads cost in Reporter effort.
+- **Some bundles will expire before triage completes.** If a Triager is out, or the Report sits in a triage queue longer than 30 days, the Debug Bundle is gone before the Triager gets to it. The mitigation is the Reporter running `fabro dump --upload` again if asked; the bundle can be regenerated from the same buggy environment. The cost is accepted because the alternative — longer retention — costs more in holding posture than re-uploads cost in Reporter effort.
 - **No "important bundle" concept.** Every Report is equal in the retention model; there is no way to mark a Report as important-enough-to-keep-longer. Accepted because marking Reports would require either Reporter identity (for Reporter-side marking) or a Triager-facing surface (for Triager-side marking), both of which are out of scope. Triagers who need a bundle longer than 30 days retrieve it before expiration and store it in Triager-side tooling.
 - **Capability-URL leaks are bounded but not eliminated.** If a URL leaks on day 1, it grants view + delete for 30 days. Thirty days is a bound on the exposure window, not zero exposure. Accepted because the alternative (auth) is out of scope by [[Principle - Narrow Forever]], and the Reporter can always delete the Report directly to shorten the exposure.
-- **Retention enforcement is a real operational concern.** A 30-day retention policy is only the correct policy if bundles actually expire on schedule. A retention bug that lets bundles live beyond 30 days turns this Decision's promises into a lie. The mechanism side of retention is deferred to `System - Retention, Storage, and Key Scheme` (manifest A5); this card names the policy.
+- **Retention enforcement is a real operational concern.** A 30-day retention policy is only the correct policy if bundles actually expire on schedule. A retention bug that lets bundles live beyond 30 days turns this Decision's promises into a lie. The mechanism side of retention lives in [[System - Retention, Storage, and Key Scheme]]; this card names the policy.
 
 ### Scope of Applicability
 
@@ -74,14 +74,14 @@ Confirmed 2026-04-22 by the product owner in the Confirmed Product Decisions sec
 
 ### Following This Decision
 
-- Every Report is created with a retention deadline of upload-time + 30 days. The deadline is recorded as an authoritative field on the Report (see [[Standard - Noun Vocabulary]]) and enforced by the retention mechanism defined in `System - Retention, Storage, and Key Scheme` (manifest A5, not yet drafted).
+- Every Report is created with a retention deadline of upload-time + 30 days. The deadline is recorded as an authoritative field on the Report (see [[Standard - Noun Vocabulary]]) and enforced by the retention mechanism defined in [[System - Retention, Storage, and Key Scheme]].
 - When a Report reaches its retention deadline, the Debug Bundle is deleted from S3, and subsequent requests to the Report's URL resolve as not-found. The service surface treats expired Reports the same as never-existed Reports — there is no "expired" state the Reporter Metadata Page renders, because the page is not served for expired Reports.
 - Reporters who want a Report gone sooner than 30 days can delete it via the delete button on the Report Metadata Page; [[Decision - Capability URLs over Auth]] is what makes that deletion path available without any authentication step. Deletion brings the retention clock to zero; it does not extend or reset any clock.
 - Triagers who need a bundle beyond 30 days retrieve it before expiration and store it in their own tooling. The service does not support post-retrieval retention requests; storage past 30 days is a Triager-side concern.
 
 ### Violating This Decision
 
-- **Wrong:** Adding a per-Report retention override (e.g., `fabro report --retain 90d`). This turns retention into a parameter surface, which is exactly the scope expansion F3 and F6 refuse. The correct posture is one retention number, product-owner-adjustable as a policy, not Reporter-adjustable per upload.
+- **Wrong:** Adding a per-Report retention override (e.g., `fabro dump --upload --retain 90d`). This turns retention into a parameter surface, which is exactly the scope expansion F3 and F6 refuse. The correct posture is one retention number, product-owner-adjustable as a policy, not Reporter-adjustable per upload.
 - **Wrong:** Adding a "pin this Report" or "extend retention" mechanism on the Report Metadata Page. This would let URL holders keep bundles alive indefinitely, which defeats the retention-bounded-exposure argument that [[Decision - Capability URLs over Auth]] depends on.
 - **Wrong:** Letting the retention deadline silently reset when a Reporter revisits the Report Metadata Page. Access should not extend retention; the deadline is set at upload and counts down.
 - **Wrong:** Not actually deleting the Debug Bundle at the deadline. A retention policy that holds bundles past the stated deadline turns this Decision's promises into a lie to Reporters; the enforcement is part of the commitment.

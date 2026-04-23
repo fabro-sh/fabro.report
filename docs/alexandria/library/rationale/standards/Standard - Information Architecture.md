@@ -2,7 +2,7 @@
 
 ## WHAT: Definition
 
-The **Information Architecture** of `fabro.report` is minimal by commitment. There is no sitemap, no navigation, no second page, and no hierarchy. The entire public IA is: **one CLI subcommand (`fabro report`), and one rendered page (the Report Metadata Page) per Report, addressed by the Report's URL**. The service's endpoints — upload, render, delete, and whatever HTTP shape those resolve to — exist solely to make that one-subcommand / one-page contract work. This Standard is captured here specifically so it *stays* minimal: an IA that is not written down invites future agents to invent navigation, hierarchy, browse endpoints, or account surfaces; an IA that is written down as "one CLI, one page per Report, nothing else" makes those inventions visible as scope changes rather than implementation decisions.
+The **Information Architecture** of `fabro.report` is minimal by commitment. There is no sitemap, no navigation, no second page, and no hierarchy. The entire public IA is: **a small, fixed set of Fabro CLI commands (`fabro dump`, `fabro dump --upload`, `fabro upload`) and one rendered page (the Report Metadata Page) per Report, addressed by the Report's URL**. The service's endpoints — upload, render, delete, and whatever HTTP shape those resolve to — exist solely to make that CLI / one-page-per-Report contract work. This Standard is captured here specifically so it *stays* minimal: an IA that is not written down invites future agents to invent navigation, hierarchy, browse endpoints, or account surfaces; an IA that is written down as "the dump / upload CLI, one page per Report, nothing else" makes those inventions visible as scope changes rather than implementation decisions.
 
 The load-bearing phrasing is *the IA is not hierarchical*. There is no root page, no index, no "all Reports" surface, no per-user view, no breadcrumbs. Every Report is reachable only by its URL, and URLs do not compose into a structure the Reporter or Triager navigates through. An agent reading this Standard should not come away expecting a home page, a listing page, or a two-level site structure — none exist.
 
@@ -19,13 +19,14 @@ The load-bearing phrasing is *the IA is not hierarchical*. There is no root page
   - [[Component - Report]] — the Report is the only content entity on this service. The Report's URL is the only routable address. There is one rendered view of a Report (the Report Metadata Page) and no other; the IA has no cause to add further routes.
   - [[Component - Report Metadata Page]] — the one page in the IA. Its structural content (ID, upload timestamp, bundle size, delete button) is fixed by that card and is not an IA-layer decision.
 - Roles that traverse the IA:
-  - [[Agent - Reporter]] — the Reporter's IA traversal is: run `fabro report`, optionally visit the Report's URL once or twice. They do not browse; they do not navigate. There is nothing to navigate.
+  - [[Agent - Reporter]] — the Reporter's IA traversal is: run `fabro dump --upload` (or `fabro upload`), optionally visit the Report's URL once or twice. They do not browse; they do not navigate. There is nothing to navigate.
   - [[Agent - Triager]] — the Triager does not traverse the IA at all. They see a URL in an out-of-band channel, extract the Report ID, and retrieve the Debug Bundle from S3 with their own AWS credentials. The service's IA is not part of the Triager's workflow, by design. See [[Agent - Triager]] for the structural commitment.
 - Vocabulary:
   - [[Standard - Noun Vocabulary]] — the IA uses canonical names exactly. The page is the **Report Metadata Page**, not the "receipt page," "landing page," "status page," or "dashboard." The URL addresses a **Report**. The CLI subcommand uploads a **Debug Bundle**.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the concrete URL path shape (host, path layout, slug format) and the S3 key layout for Debug Bundles. This Standard names the *endpoints that must exist* and the *IA shape* they serve; the *path strings* and *key strings* are A5's territory.
-  - `Standard - Interaction Patterns (CLI + Delete)` (manifest A7) — the CLI UX for `fabro report` (progress, error surface, exact flags beyond `-m` and metadata tags, success output shape) and the delete confirmation flow on the Report Metadata Page. The CLI surface in this Standard names `fabro report` and the flags confirmed in source; the detailed UX is A7's territory.
+- Mechanism and UX cards:
+  - [[System - Retention, Storage, and Key Scheme]] — the concrete URL path shape (host, path layout, slug format) and the S3 key layout for Debug Bundles. This Standard names the *endpoints that must exist* and the *IA shape* they serve; the *path strings* and *key strings* are A5's territory.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the CLI UX for `fabro dump`, `fabro dump --upload`, and `fabro upload` (progress, error surface, exact flags beyond `-m` / metadata tags / `--dry-run`, success output shape) and the delete confirmation flow on the Report Metadata Page. The CLI surface in this Standard names the canonical commands and the flags confirmed in source; the detailed UX is A7's territory.
+- Forward references (not yet drafted):
   - `Standard - Design System` (manifest C2) — visual direction for the one page the IA serves.
 
 ## WHY: Rationale
@@ -44,26 +45,29 @@ Established 2026-04-22 alongside the rest of the Amplifier-tier build. Stable. R
 
 ### CLI Surface
 
-The CLI surface of `fabro.report` is exactly one subcommand of the Fabro binary:
+The CLI surface of `fabro.report` is a small, fixed set of subcommands of the Fabro binary (renamed 2026-04-23; see [[Standard - Noun Vocabulary]] "Canonical CLI Commands"):
 
-- **`fabro report`** — uploads a Debug Bundle (produced by `fabro debug`) to S3, returns the Report's URL on stdout. This is the entire upload surface; it is also the entire *creation* surface of the product (a Report can be created only by running this subcommand).
+- **`fabro dump`** — produces a Debug Bundle tarball locally. Does not upload. This is the *creation* surface for a bundle; a Reporter who wants to inspect, archive, or selectively upload the tarball starts here.
+- **`fabro dump --upload`** — produces a Debug Bundle AND uploads it in one step, returning the Report's URL on stdout. Reporter's primary path and the most common creation surface for a [[Component - Report]].
+- **`fabro upload`** — uploads a previously-dumped Debug Bundle tarball. Supports `--dry-run` to verify the upload path (size pre-check, connectivity, presigned-URL issuance) without actually transferring bytes.
 - **Flags** — at minimum, the flags confirmed in source:
   - `-m "short message"` — supplies an optional Reporter message that becomes a field on the resulting [[Component - Report]]. Per `docs/alexandria/sources/product-vision.md` L58.
-  - arbitrary key/value metadata tags — become fields on the resulting [[Component - Report]]. Per `docs/alexandria/sources/product-vision.md` L85. The exact flag syntax for these tags (e.g., `--tag key=value`) is deferred to `Standard - Interaction Patterns (CLI + Delete)` (manifest A7).
+  - arbitrary key/value metadata tags — become fields on the resulting [[Component - Report]]. Per `docs/alexandria/sources/product-vision.md` L85. The exact flag syntax for these tags (e.g., `--tag key=value`) is deferred to [[Standard - Interaction Patterns (CLI + Delete)]].
+  - `--dry-run` (on `fabro upload`) — verifies the upload path without transferring bytes. Per `docs/alexandria/sources/cli-interaction-patterns.md`.
 
-The CLI subcommand lives in the main Fabro binary, not in a standalone tool. This is called out in `docs/alexandria/sources/product-vision.md` L111–L113 (Parent Product Context). `fabro report` is **new** to Fabro's CLI surface — it is not currently in Fabro's documented command set — and building this intake service implies adding the subcommand.
+The CLI subcommands live in the main Fabro binary, not in a standalone tool. This is called out in `docs/alexandria/sources/product-vision.md` L111–L113 (Parent Product Context). The `fabro dump` / `fabro dump --upload` / `fabro upload` surface is **new** to Fabro's CLI — it is not currently in Fabro's documented command set — and building this intake service implies adding those subcommands.
 
-There is no second CLI subcommand on this product's surface. No `fabro reports list`, no `fabro report status`, no `fabro report delete` (the delete capability is on the Report Metadata Page via URL possession, not on the CLI). No auxiliary CLI for Triagers (Triagers use `aws s3 cp` or the team's own wrappers — see [[Agent - Triager]]).
+There are no other CLI subcommands on this product's surface. No `fabro reports list`, no `fabro report status`, no `fabro dump delete` (the delete capability is on the Report Metadata Page via URL possession, not on the CLI). No auxiliary CLI for Triagers (Triagers use `aws s3 cp` or the team's own wrappers — see [[Agent - Triager]]).
 
 ### HTTP Surface
 
-The HTTP surface of `fabro.report` is exactly one URL shape — the **Report URL** — and a small number of endpoints behind it that make the upload / render / delete contract work. The exact path format (host, slug layout, route prefixes) is deferred to `System - Retention, Storage, and Key Scheme` (manifest A5, not yet drafted); this Standard names the *endpoints* and their *IA roles*, not their path strings.
+The HTTP surface of `fabro.report` is exactly one URL shape — the **Report URL** — and a small number of endpoints behind it that make the upload / render / delete contract work. The exact path format (host, slug layout, route prefixes) is deferred to [[System - Retention, Storage, and Key Scheme]]; this Standard names the *endpoints* and their *IA roles*, not their path strings.
 
 The endpoints that must exist:
 
 - **Render endpoint** — serves the [[Component - Report Metadata Page]] for a valid, non-expired, non-deleted Report. Addressed by the Report URL. No auth; capability-URL-addressed, per [[Decision - Capability URLs over Auth]]. Returns not-found for expired / deleted Reports per [[Decision - 30-Day Retention Default]].
 - **Delete endpoint** — handles the delete action submitted from the [[Component - Report Metadata Page]]'s delete button. Capability-URL-addressed (no additional authentication). Removes the Report from the active set and deletes the Debug Bundle from S3.
-- **Upload endpoint** *(if and only if the CLI talks directly to the service for upload)* — accepts the Debug Bundle from `fabro report` and creates a new Report. Whether this endpoint exists on the service or whether the CLI uploads to S3 via a presigned URL obtained from the service is a `System - Retention, Storage, and Key Scheme` (manifest A5) question. Both shapes satisfy the IA contract; the choice is mechanism, not IA. This Standard does not select one.
+- **Upload-coordination endpoint** — accepts an upload request from `fabro dump --upload` / `fabro upload` and creates a new Report. Per [[Standard - Interaction Patterns (CLI + Delete)]], the CLI does not POST bundle bytes to the service; the service mints a Report record, returns a presigned S3 PUT URL (and the eventual Report URL) to the CLI, and the CLI uploads the Debug Bundle directly to S3. The coordination-vs-presigned split is mechanism detail governed by [[System - Retention, Storage, and Key Scheme]]; this Standard only names the endpoint's IA role (create a Report, return a URL) and does not pin the path.
 
 No other HTTP endpoints exist on this product's surface. Specifically:
 
@@ -87,7 +91,7 @@ Structurally:
 
 - Debug Bundles live in an S3 bucket, keyed by (or derived from) the [[Component - Report]] ID.
 - The key layout is designed to make Triager retrieval straightforward: given a Report ID extracted from a URL, a Triager can construct the S3 key and run `aws s3 cp s3://<bucket>/<key> ./bundle.tar.gz`.
-- Key details — the bucket name, the key format, whether the key is the Report ID directly or a derivative, any prefix or sharding structure — are `System - Retention, Storage, and Key Scheme` (manifest A5) concerns. This Standard does not pin those details.
+- Key details — the bucket name, the key format, whether the key is the Report ID directly or a derivative, any prefix or sharding structure — are [[System - Retention, Storage, and Key Scheme]] concerns. This Standard does not pin those details.
 - The S3 bucket is **not** part of the service's public HTTP surface. Access is via AWS IAM, not via any endpoint on `fabro.report`. See [[Decision - Capability URLs over Auth]] "Scope of Applicability."
 
 Importantly for IA: the S3 layout does **not** imply any service-side listing, filtering, or browsing capability. Triager-side aggregation (if the team ever wants it) is done with `aws` tooling and the team's own scripts against the bucket, not through any endpoint on this service.
@@ -112,5 +116,6 @@ A second test: "If this IA change were implemented, would a Reporter or Triager 
 
 ## Sources
 
-- `docs/alexandria/sources/product-vision.md` (L20–L32 end-to-end flow — CLI + S3 + URL shape; L31 receipt page content; L63–L64 Triagers use own AWS credentials, not the service; L87 capability-URL access; L100 Report Metadata Page as the only rendered surface; L111–L113 Parent Product Context — `fabro report` as new Fabro subcommand)
+- `docs/alexandria/sources/product-vision.md` (L20–L32 end-to-end flow — CLI + S3 + URL shape; L31 receipt page content; L63–L64 Triagers use own AWS credentials, not the service; L87 capability-URL access; L100 Report Metadata Page as the only rendered surface; L111–L113 Parent Product Context — dump / upload subcommands as new to Fabro's CLI; Confirmed Product Decisions 2026-04-23 — CLI rename from `fabro debug` / `fabro report` to `fabro dump` / `fabro dump --upload` / `fabro upload`)
+- `docs/alexandria/sources/cli-interaction-patterns.md` (canonical command names post-2026-04-23 rename; presigned-URL upload architecture; `--dry-run` flag)
 - `docs/alexandria/inventory/card-manifest.md` (A6 entry)

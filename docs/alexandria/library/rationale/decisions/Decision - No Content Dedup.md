@@ -21,8 +21,9 @@ The load-bearing phrasing is *no content hash, no content identity, no coalescin
 - Referenced by:
   - [[Component - Report]] — the Report is a per-upload identity, not a per-content identity; the Component card inherits this Decision for its identity semantics and explicitly refuses content-hash or canonical-bundle fields on the Report.
   - [[Component - Report Metadata Page]] — the page explicitly does not show symbolicated stacks, rendered logs, or any content-derived information; this Decision is the upstream commitment that makes "no content inspection" a structural property rather than an implementation choice.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the storage layout assumes one Debug Bundle per Report; A5 does not need to model content-identity or reference counts.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the CLI does not hash the Debug Bundle to check for a prior upload before sending; A7's command set enforces the no-dedup posture by not adding a content-check step. Duplicate uploads from the same Reporter produce two Reports, two URLs, and no service-side signal.
+- Implemented by:
+  - [[System - Retention, Storage, and Key Scheme]] — the storage layout assumes one Debug Bundle per Report; A5's Report IDs are cryptographically-random (not content-derived) and the key scheme does not model content-identity or reference counts.
 
 ## WHY: Rationale
 
@@ -42,7 +43,7 @@ The calm-register argument (F4) is also present: every invisible operational mod
 ### What It Costs
 
 - **Storage cost of duplicates is not optimized.** If two Reporters happen to upload byte-identical Debug Bundles in the same retention window, two copies live in S3 for up to 30 days. At this product's expected volume (Fabro bug reports from self-hosted Fabro users), the cost is expected to be marginal. The cost is accepted because the alternative — maintaining dedup — costs more in operational complexity than duplicate storage costs in dollars.
-- **No "you've already uploaded this" signal for Reporters.** A Reporter who accidentally runs `fabro report` twice on the same Debug Bundle produces two Reports and two URLs. The service does not notice the duplication and does not signal it back. Accepted because signaling would require hash computation and a same-content comparison, which is the dedup surface area this Decision rejects.
+- **No "you've already uploaded this" signal for Reporters.** A Reporter who accidentally runs `fabro dump --upload` twice on the same Debug Bundle (or runs `fabro upload` twice against the same tarball) produces two Reports and two URLs. The service does not notice the duplication and does not signal it back. Accepted because signaling would require hash computation and a same-content comparison, which is the dedup surface area this Decision rejects.
 - **No "canonical bundle" concept.** Two Reports with identical bundles have no relationship the service can see. Accepted because introducing a canonical-bundle concept would require the content-identity machinery this Decision rejects, and the team-retrieval workflow does not need that concept anyway — Triagers retrieve by Report ID, not by bundle content.
 
 ### Scope of Applicability

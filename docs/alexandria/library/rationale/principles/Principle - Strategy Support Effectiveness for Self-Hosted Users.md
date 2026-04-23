@@ -49,7 +49,7 @@ Confirmed 2026-04-22 by the product owner, captured in the Confirmed Product Dec
 
 ### What Following This Principle Looks Like
 
-- The `fabro report` CLI and the service together make it as frictionless as possible for a self-hosted Fabro user who hit a bug to get their Debug Bundle to the Fabro team. The upload path is short; the URL is easy to share; the team can retrieve the bundle from S3 with their own AWS credentials. Each of these is justified by "team can retrieve the bundle."
+- The `fabro dump --upload` (and standalone `fabro upload`) CLI together with the service make it as frictionless as possible for a self-hosted Fabro user who hit a bug to get their Debug Bundle to the Fabro team. The upload path is short; the URL is easy to share; the team can retrieve the bundle from S3 with their own AWS credentials. Each of these is justified by "team can retrieve the bundle."
 - The Report Metadata Page shows only what the Reporter needs to confirm the upload happened and to be able to delete it if they want. It does not try to be useful beyond that because usefulness to the Reporter beyond upload confirmation is not what Strategy is buying.
 - Metadata captured at upload (Fabro version, optional reporter message, arbitrary key/value tags) is exactly the metadata the team needs to triage which bundle to look at first. It is not a telemetry feed and it is not an identity system.
 - When the team wants a new capability, the first question is "does this help a team member retrieve a bundle?" If the new capability is consumed by the Reporter after upload, it is probably not what Strategy is buying and should be scrutinized.

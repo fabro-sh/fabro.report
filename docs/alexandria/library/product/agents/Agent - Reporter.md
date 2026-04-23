@@ -2,7 +2,7 @@
 
 ## WHAT: Definition
 
-A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro report` to upload a Debug Bundle to `fabro.report` so the Fabro team can retrieve it. The Reporter has no identity on this service — no account, no login, no user record — and is identified only by the Fabro version captured as metadata at upload time. Their entire interaction with the service is the `fabro report` CLI: one command, one Debug Bundle upload, one short URL returned on stdout, and whatever CLI flags they chose to pass. They may optionally visit the Report Metadata Page at that URL, but nothing obliges them to. The Reporter's goal is simple and time-bounded: get the Debug Bundle to the Fabro team, get the URL into the right place (GitHub issue, Slack, email), and get back to the work the bug interrupted.
+A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro dump --upload` (or `fabro upload` against a previously-dumped tarball) to upload a Debug Bundle to `fabro.report` so the Fabro team can retrieve it. The Reporter has no identity on this service — no account, no login, no user record — and is identified only by the Fabro version captured as metadata at upload time. Their entire interaction with the service is the Fabro CLI's dump-and-upload flow: one command (or two, if they chose to dump and upload separately), one Debug Bundle upload, one short URL returned on stdout, and whatever CLI flags they chose to pass. They may optionally visit the Report Metadata Page at that URL, but nothing obliges them to. The Reporter's goal is simple and time-bounded: get the Debug Bundle to the Fabro team, get the URL into the right place (GitHub issue, Slack, email), and get back to the work the bug interrupted.
 
 ## WHERE: Ecosystem
 
@@ -13,9 +13,9 @@ A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro report` 
 - Counterpart role:
   - [[Agent - Triager]] — the Fabro team member on the other end of the pickup. The Reporter and Triager are the two endpoints of the handoff, and the asymmetry between them — no-identity Reporter on the service, credentialed Triager retrieving from S3 — is load-bearing for the product shape. A Reporter never becomes a Triager within this service; the two roles are structurally separate.
 - Access model:
-  - [[Decision - Capability URLs over Auth]] — the short URL returned by `fabro report` is the Reporter's **entire access surface** to the service after upload. Possession of the URL grants view of the Report Metadata Page and the ability to delete the Report. There is nothing else the Reporter can do on this service; there is no login, no "my uploads" view, no recovery flow.
+  - [[Decision - Capability URLs over Auth]] — the short URL returned by `fabro dump --upload` (or `fabro upload`) is the Reporter's **entire access surface** to the service after upload. Possession of the URL grants view of the Report Metadata Page and the ability to delete the Report. There is nothing else the Reporter can do on this service; there is no login, no "my uploads" view, no recovery flow.
 - Tone of the interaction:
-  - [[Principle - Minimal Public Surface Feels Calm]] — the emotional goal for the Reporter is **efficient and reassured**. The Reporter is already frustrated by the bug that sent them to `fabro report`; the CLI and the Report Metadata Page must confirm the upload cleanly and step out of the way. Warmth that slows the handoff is worse than no warmth at all.
+  - [[Principle - Minimal Public Surface Feels Calm]] — the emotional goal for the Reporter is **efficient and reassured**. The Reporter is already frustrated by the bug that sent them to `fabro dump --upload`; the CLI and the Report Metadata Page must confirm the upload cleanly and step out of the way. Warmth that slows the handoff is worse than no warmth at all.
 - Scope coherence:
   - [[Product Thesis - Pickup Point, Not Triage Surface]] — the Reporter drops a Debug Bundle at the pickup point and leaves. They are not an audience for in-browser rendering, symbolication, or bundle inspection; designing Reporter-facing features beyond upload + URL + optional delete is the single most common drift shape this product rejects.
   - [[Principle - Reject Like bun.report Drift]] — `bun.report`'s Reporter-equivalent is a richer role with a post-upload web experience (markdown-rendered crash data, feedback prompts). `fabro.report`'s Reporter is deliberately thinner; any proposal to enrich the Reporter's post-upload surface is the paradigmatic drift this Principle enumerates.
@@ -24,12 +24,13 @@ A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro report` 
 - Scope commitment:
   - [[Principle - Narrow Forever]] — Reporter-facing scope expansion (accounts, "my uploads" views, post-upload feedback, in-browser bundle viewing) is permanently out-of-scope; the Reporter role described here is the Reporter role forever.
 - Referenced by:
-  - [[Component - Report]] — the upload event the Reporter creates when they run `fabro report`; carries the URL they share and the authoritative field list the Reporter contributes to (Fabro version, optional message, metadata tags).
+  - [[Component - Report]] — the upload event the Reporter creates when they run `fabro dump --upload` (or `fabro upload`); carries the URL they share and the authoritative field list the Reporter contributes to (Fabro version, optional message, metadata tags).
   - [[Component - Report Metadata Page]] — the one-page surface at the returned URL that the Reporter may optionally visit; carries the delete button they may optionally use.
-  - [[Standard - Information Architecture]] — A6 describes the Reporter's IA traversal as "run `fabro report`, optionally visit the Report's URL once or twice." Reporters do not browse and do not navigate; the IA is the commitment that preserves that.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Standard - Interaction Patterns (CLI + Delete)` (manifest A7) — the `fabro report` CLI UX specifics (progress indicator, error surface, success output) the Reporter actually experiences.
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
+  - [[Standard - Information Architecture]] — A6 describes the Reporter's IA traversal as "run `fabro dump --upload`, optionally visit the Report's URL once or twice." Reporters do not browse and do not navigate; the IA is the commitment that preserves that.
+- UX and mechanism the Reporter experiences:
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the `fabro dump --upload` / `fabro upload` CLI UX specifics (progress indicator, error surface, success output, `--dry-run`) the Reporter actually experiences.
+  - [[Standard - Accessibility Policy]] — the accessibility floor for the two surfaces the Reporter touches: CLI `NO_COLOR` support and WCAG 2.2 AA on the Report Metadata Page. A Reporter using a screen reader, operating the terminal without color, or navigating with the keyboard alone must still hit the pickup-point flow cleanly.
+  - [[System - Retention, Storage, and Key Scheme]] — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
 
 ## WHY: Rationale
 
@@ -45,11 +46,11 @@ New role, no past. Confirmed 2026-04-22 by the product owner in the Users sectio
 
 ### Context: When a Reporter Arrives
 
-The Reporter is not a product-evangelist persona; they arrive because something failed. A self-hosted Fabro user was using Fabro to run a workflow, Fabro broke, and the user ran `fabro debug` to get a tarball and then ran `fabro report` to upload it. By the time the Reporter sees the CLI output, they have already been interrupted by a failure, already lost context on whatever they were actually trying to do, and are looking to spend the minimum possible time on the reporting path so they can either (a) resume their original work, (b) share the URL with the Fabro team and wait, or (c) try a workaround. The CLI's output shape is calibrated to that emotional state — this is why [[Principle - Minimal Public Surface Feels Calm]] specifies *efficient and reassured* and not, say, *welcoming* or *thorough*.
+The Reporter is not a product-evangelist persona; they arrive because something failed. A self-hosted Fabro user was using Fabro to run a workflow, Fabro broke, and the user ran `fabro dump --upload` (or, having already produced a tarball with `fabro dump`, ran `fabro upload`) to ship it to the Fabro team. By the time the Reporter sees the CLI output, they have already been interrupted by a failure, already lost context on whatever they were actually trying to do, and are looking to spend the minimum possible time on the reporting path so they can either (a) resume their original work, (b) share the URL with the Fabro team and wait, or (c) try a workaround. The CLI's output shape is calibrated to that emotional state — this is why [[Principle - Minimal Public Surface Feels Calm]] specifies *efficient and reassured* and not, say, *welcoming* or *thorough*.
 
 ### What the Reporter Does
 
-- Runs `fabro report` (optionally with `-m "short message"` or arbitrary key/value metadata tags) against a Debug Bundle produced by `fabro debug`.
+- Runs `fabro dump --upload` (optionally with `-m "short message"` or arbitrary key/value metadata tags) to produce and upload a Debug Bundle in one step, or runs `fabro dump` followed by `fabro upload` when they want the two phases separate (e.g., to use `fabro upload --dry-run` first).
 - Reads the CLI's success output, which confirms the upload and includes the URL.
 - Copies the URL into wherever they are going to share it (GitHub issue, Slack, email). This step is out-of-band — the service plays no role in it.
 - Optionally visits the Report Metadata Page at that URL to confirm upload details (Report ID, upload timestamp, bundle size) or to delete the Report if they change their mind about sharing it.
@@ -66,8 +67,8 @@ The Reporter is not a product-evangelist persona; they arrive because something 
 
 ### Examples
 
-- **Example 1 — the happy path.** A self-hosted Fabro user hits a bug while running `fabro run`. They run `fabro debug` (which produces the tarball) and then `fabro report -m "cargo install hangs on CI"`. The CLI uploads the Debug Bundle, prints a confirmation line and a short URL, and exits. The Reporter pastes the URL into a GitHub issue with a one-line description of the bug. They close the terminal and resume their original work. They never visit the Report Metadata Page. The Fabro team picks up the URL in the issue, extracts the Report ID, and retrieves the Debug Bundle from S3 using their own AWS credentials. The pickup is complete; the Reporter's involvement is over.
-- **Example 2 — the Reporter changes their mind.** A Reporter runs `fabro report`, gets a URL, pastes it into a Slack channel, and then realizes the Debug Bundle contains a configuration fragment with a path they do not want shared. They visit the Report Metadata Page at the URL, click the delete button, confirm the deletion, and the Report is gone. No login was required; possession of the URL was the entire authorization. See [[Decision - Capability URLs over Auth]].
+- **Example 1 — the happy path.** A self-hosted Fabro user hits a bug while running `fabro run`. They run `fabro dump --upload -m "cargo install hangs on CI"`. The CLI produces the tarball, uploads the Debug Bundle, prints a confirmation line and a short URL, and exits. The Reporter pastes the URL into a GitHub issue with a one-line description of the bug. They close the terminal and resume their original work. They never visit the Report Metadata Page. The Fabro team picks up the URL in the issue, extracts the Report ID, and retrieves the Debug Bundle from S3 using their own AWS credentials. The pickup is complete; the Reporter's involvement is over.
+- **Example 2 — the Reporter changes their mind.** A Reporter runs `fabro dump --upload`, gets a URL, pastes it into a Slack channel, and then realizes the Debug Bundle contains a configuration fragment with a path they do not want shared. They visit the Report Metadata Page at the URL, click the delete button, confirm the deletion, and the Report is gone. No login was required; possession of the URL was the entire authorization. See [[Decision - Capability URLs over Auth]].
 
 ### Anti-Examples
 

@@ -2,14 +2,20 @@
 
 **Job:** Conan Job 1 — Inventory
 **Date:** 2026-04-22
+**Last incremental update:** 2026-04-23 (three new Amplifier cards A12/A13/A14 added; A5/A7/A8 unblocked; build sequence extended — see Inventory Pass 2 at `docs/alexandria/reviews/inventory-pass-2-tech-stack.md`)
 **Config:** Factory × Low Novelty × Low Complexity — 22-area pool (5 Foundation / 4 Core / 9 Amplifier / 4 Deprioritized)
 **Source inputs:**
 - `docs/alexandria/alexandria-config.json`
 - `docs/alexandria/initialize-output.md`
-- `docs/alexandria/sources/product-vision.md` (updated — strategic WHY and "narrow forever" both confirmed)
+- `docs/alexandria/sources/product-vision.md` (updated — strategic WHY and "narrow forever" both confirmed; CLI command rename confirmed 2026-04-23)
+- `docs/alexandria/sources/tone-and-emotional-goals.md` (feeds F4)
+- `docs/alexandria/sources/tech-stack-and-deployment.md` (feeds A12, A13, A14)
+- `docs/alexandria/sources/storage-and-keys.md` (feeds A5)
+- `docs/alexandria/sources/cli-interaction-patterns.md` (feeds A7)
+- `docs/alexandria/sources/accessibility.md` (feeds A8)
 - `docs/alexandria/reviews/product-vision-source-assessment.md` (prior candidate list, 14 cards)
 
-**Summary:** 16 cards to build. 5 Foundation, 4 Core, 7 Amplifier, 0 Deprioritized (all 4 Deprioritized areas omitted as not-needed). 6 cards blocked on missing source material; 10 cards draftable from existing source. First 3 draftable: Product Thesis, Noun Vocabulary, Anti-Patterns.
+**Summary:** 19 cards to build (16 original + 3 added 2026-04-23). 5 Foundation, 4 Core, 10 Amplifier, 0 Deprioritized (all 4 Deprioritized areas omitted as not-needed). 2 cards remain blocked on source (C2, C3 — visual direction). 17 cards draftable from existing source (12 already drafted + ratified; 5 drafting in 2026-04-23 follow-on batch).
 
 ---
 
@@ -32,14 +38,14 @@ Card type mapping to areas:
 | 2.1 Information Architecture | Standard | Trivial IA captured as a spec so it stays trivial. |
 | 2.2 Noun Vocabulary | Standard | Canonical names + definitions. |
 | 2.3 Product Entities | Component (×3) | Report, Debug Bundle, Report Metadata Page. |
-| 2.4 System Design | System | Retention, S3 layout, key scheme. |
+| 2.4 System Design | System (×2) | Retention, S3 layout, key scheme (A5) + Service Topology (A14, added 2026-04-23 — Fargate/Route53/IAM/Terraform). Separate change frequencies, separate concerns. |
 | 3.2 Emotional / Aesthetic Goals | Principle | Tone anchor for a minimal-surface product. |
 | 3.5 Anti-Patterns | Principle | The load-bearing "not bun.report" card. (Taxonomy note: linter does not recognize "Anti-Pattern" as a canonical type, so this card is typed Principle with negative-framing language. Renamed 2026-04-22.) |
 | 4.1 Design System | Standard | Receipt-page conventions, explicit. |
 | 4.3 Prototypes / Mockups | Standard (with sketch) | Sketch + caption as a spec. |
 | 4.2 Interaction Patterns | Standard | CLI upload + delete interaction. |
 | 4.4 Accessibility Standards | Standard | Factory-mandated policy, even if minimal. |
-| 5.1 Key Decisions Log | Decision (×3) | Three confirmed decisions worth individual cards. |
+| 5.1 Key Decisions Log | Decision (×5) | Five confirmed decisions worth individual cards: Capability URLs over Auth (A9), No Content Dedup (A10), 30-Day Retention Default (A11), Service Stack (A12 — Rust/Fargate, added 2026-04-23), Sentry for Service Errors Not Bundle Processing (A13 — added 2026-04-23). |
 | 5.2+5.4 Institutional Memory | — | Empty at start; accumulates over time. No card yet. |
 | 5.3 Roadmap | Principle | "Narrow forever" — Roadmap for this product is a commitment, not a plan. |
 
@@ -85,13 +91,16 @@ Build after Core. Several Amplifier areas collapse into single cards or pair wit
 | A2 | `Agent - Triager` | Agent | 1.3 | `/product/` | 12 | EXISTS | Thin persona card. Fabro team member; uses own AWS credentials; never touches intake service. |
 | A3 | `Component - Report` | Component | 2.3 | `/product/` | 13 | EXISTS | The upload event and its public identity. Links to Noun Vocabulary (F2). |
 | A4 | `Component - Report Metadata Page` | Component | 2.3 | `/product/` | 14 | EXISTS | The one-page receipt at the URL. Links to Design System (C2) once it exists. |
-| A5 | `System - Retention, Storage, and Key Scheme` | System | 2.4 | `/product/` | 15 | PARTIAL | 30-day expiration mechanics, S3 key layout, bundle storage. Source has policy but not mechanism (TTL via S3 lifecycle? cron? soft-delete?). |
+| A5 | `System - Retention, Storage, and Key Scheme` | System | 2.4 | `/product/` | 15 | EXISTS (as of 2026-04-23 via `storage-and-keys.md`) | 30-day expiration via S3 lifecycle rule; date-partitioned keys `<YYYY>/<MM>/<DD>/<id>/`; sidecar JSON metadata at `<id>/metadata.json`; bundle at `<id>/bundle.tar.gz`; 32-hex-char Report IDs (128 bits entropy); bucket `fabro-report-bundles` (env-overridable), region `us-east-1` (env-overridable). |
 | A6 | `Standard - Information Architecture` | Standard | 2.1 | `/rationale/` | 16 | EXISTS | Minimal IA: one page, one URL per Report, delete-on-URL. Captured so it stays minimal. |
-| A7 | `Standard - Interaction Patterns (CLI + Delete)` | Standard | 4.2 | `/rationale/` | 17 | PARTIAL | `fabro report` CLI UX (progress, errors, URL output); delete-button confirmation flow. Source missing: progress indicator? error surface? delete confirmation? |
-| A8 | `Standard - Accessibility Policy` | Standard | 4.4 | `/rationale/` | 18 | ABSENT | Factory-mandated minimum. Source says "almost irrelevant for a headless-ish receipt" — card should be explicit about the minimum floor (WCAG AA on receipt page, CLI output respects NO_COLOR, etc.). |
+| A7 | `Standard - Interaction Patterns (CLI + Delete)` | Standard | 4.2 | `/rationale/` | 17 | EXISTS (as of 2026-04-23 via `cli-interaction-patterns.md`) | `fabro dump --upload` / `fabro upload --dry-run` (renamed from `fabro report` 2026-04-23); presigned S3 URLs so bytes never flow through service; progress bar; `NO_COLOR`-aware colored errors; client-side delete confirmation; 50MB cap. |
+| A8 | `Standard - Accessibility Policy` | Standard | 4.4 | `/rationale/` | 18 | EXISTS (as of 2026-04-23 via `accessibility.md`) | WCAG 2.2 AA for Report Metadata Page; `NO_COLOR` for CLI; keyboard + screen-reader HTML best practices; `/ui` skill workflow note for page implementation. |
 | A9 | `Decision - Capability URLs over Auth` | Decision | 5.1 | `/rationale/` | 19 | EXISTS | Why no auth; why URL-as-capability is the whole access model. |
 | A10 | `Decision - No Content Dedup` | Decision | 5.1 | `/rationale/` | 20 | EXISTS | Why no dedup; rationale is "bundles expire anyway." |
 | A11 | `Decision - 30-Day Retention Default` | Decision | 5.1 | `/rationale/` | 21 | EXISTS | Why 30 days; what happens at expiration. |
+| A12 | `Decision - Service Stack` | Decision | 5.1 | `/rationale/` | 22 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Rust on AWS Fargate, Docker image, Terraform-provisioned. Rejects Bun/Fly (bun.report template) and Rust/Fly (Fabro's deployment model). Chosen for AWS-native IAM-role-based S3 access. Added 2026-04-23. |
+| A13 | `Decision - Sentry for Service Errors, Not Bundle Processing` | Decision | 5.1 | `/rationale/` | 23 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Distinguishes Sentry-as-service-error-tracker (chosen) from Sentry-as-downstream-bundle-processor (rejected by F3). Pairs with an inline clarifying note in F3. Added 2026-04-23. |
+| A14 | `System - Service Topology` | System | 2.4 | `/product/` | 24 | EXISTS (as of 2026-04-23 via `tech-stack-and-deployment.md`) | Fargate task, Route53 DNS (`fabro.report` registered), S3 bucket, IAM role, Terraform-provisioned. Separate from A5 (data topology) — different change frequencies, different concerns. Added 2026-04-23. |
 
 **Deferred Amplifier area:**
 
@@ -154,21 +163,34 @@ Cards F1, F2, F3, F5, F6, C4, A1, A2, A3, A4, A6, A9, A10, A11 (14 of 16) can be
 
 Then F4 (blocked on tone source), then Core tier.
 
+## Follow-On Build Sequence (2026-04-23)
+
+After the 12 cards ratified through commit `3b4fd06`, and after the CLI rename cascade (mechanical edit pass across F2/A1/F1/F3/F4/F5/F6/A2/A3/A4/A6/A9/A10/A11/C1/C4 — see `docs/alexandria/sources/cli-interaction-patterns.md` for scope), the remaining build order is:
+
+| Order | Card | Depends On |
+|---|---|---|
+| 17 | A5 `System - Retention, Storage, and Key Scheme` | Cascade done; F2 canonical names current |
+| 18 | A7 `Standard - Interaction Patterns (CLI + Delete)` | Cascade done |
+| 19 | A8 `Standard - Accessibility Policy` | Cascade done |
+| 20 | A12 `Decision - Service Stack` | Independent |
+| 21 | A13 `Decision - Sentry for Service Errors, Not Bundle Processing` | Pairs with inline F3 clarifying note in same pass |
+| 22 | A14 `System - Service Topology` | Cites A5, A12, A13 — drafts last |
+
+C2 and C3 remain blocked on visual direction.
+
 ---
 
 ## Blocked Cards
 
 | Card | Blocker | Unblock By |
 |---|---|---|
-| F4 `Principle - Minimal Public Surface Feels Calm` | No tone guidance in source | Bryan provides tone direction; Sam extracts to a source-material file, Conan assesses it, then drafts card. |
-| C1 `Standard - Competitive Context` | Partial — bun.report covered; paste services / support-bundle uploaders not surveyed | Bryan decides whether a survey is worth the effort; if yes, Raven or Bryan produces the survey. |
 | C2 `Standard - Design System` | No visual direction captured | Bryan provides receipt-page visual direction; source-material file created. |
 | C3 `Standard - Receipt Page Sketch` | No sketch exists | Same blocker as C2 — draft together. |
-| A5 `System - Retention, Storage, and Key Scheme` | Mechanism (vs policy) not specified | Bryan picks S3-lifecycle vs app-cron; decides key scheme. |
-| A7 `Standard - Interaction Patterns` | CLI UX specifics + delete-confirmation flow undefined | Bryan answers the CLI-UX questions. |
-| A8 `Standard - Accessibility Policy` | Floor not specified | Bryan confirms "WCAG AA + NO_COLOR" is the floor or provides alternative. |
 
-**Claim the build is not blocked on these.** Sam can draft 14 of 16 cards today. The 7 blocked cards are Amplifier/Core tier; they wait their turn regardless.
+*Resolved 2026-04-23 (sources captured, unblocked):* F4, A5, A7, A8.
+*Resolved 2026-04-22:* C1 (closed as one-pager per Open Flag 3 — no survey needed).
+
+**Only 2 of 19 cards remain blocked,** both on visual direction for the Report Metadata Page.
 
 ---
 

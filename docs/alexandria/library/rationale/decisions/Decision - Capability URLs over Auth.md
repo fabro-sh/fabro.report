@@ -20,14 +20,16 @@ The load-bearing phrasing is *the URL is the whole access-control mechanism*. An
   - [[Decision - 30-Day Retention Default]] — capability URLs depend on the URL eventually expiring. A URL that grants view + delete forever is a larger security exposure than one that expires after 30 days; the retention default is what bounds the capability-URL surface's lifetime risk. The two Decisions reinforce each other.
 - Referenced by:
   - [[Decision - No Content Dedup]] — that Decision cites the absence of Reporter identity (established here) as the reason per-Reporter dedup is not an option; no identity means no per-Reporter scoping for any purpose.
-  - [[Agent - Reporter]] — the capability URL returned by `fabro report` is the Reporter's entire access surface to the service after upload; there is no login, no "my uploads" view, no recovery flow — the Reporter role as written is the role-layer expression of this Decision.
+  - [[Agent - Reporter]] — the capability URL returned by `fabro dump --upload` (or `fabro upload`) is the Reporter's entire access surface to the service after upload; there is no login, no "my uploads" view, no recovery flow — the Reporter role as written is the role-layer expression of this Decision.
   - [[Agent - Triager]] — Triagers do not "unlock" the Debug Bundle through the URL; they use AWS IAM for S3 retrieval and URL possession only to optionally delete a Report on the Reporter's request. The Triager role's no-service-auth shape is the team-side expression of this Decision.
   - [[Component - Report]] — the Report's ID and URL are the capability-bearing values; that Component inherits this Decision for its access semantics and carries the URL-is-capability property as a structural field.
   - [[Component - Report Metadata Page]] — the rendered surface addressed by the capability URL; implements view + delete on URL possession alone, with no second factor.
   - [[Standard - Competitive Context]] — enumerates per-user accounts / per-team scoping as features explicitly not borrowed from `bun.report`; this Decision is the upstream access-model commitment that closes that borrowing vector.
   - [[Standard - Information Architecture]] — the IA Standard names URL possession as coextensive with the product's access model and routable surface; this Decision is the access-model half of that IA commitment.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the key scheme must produce URLs whose capability is non-guessable (sufficient entropy that brute-forcing URLs is infeasible); the key-scheme decisions inherit from this access model.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the delete button on the Report Metadata Page authorizes solely on URL possession with no additional credential check; A7's client-side-confirmation flow is the interaction-layer expression of this Decision.
+  - [[Standard - Accessibility Policy]] — the delete-confirmation accessibility requirement is load-bearing precisely because the delete action is the one Reporter-initiated capability on the service after upload under this Decision; if the confirmation is inaccessible, the capability is effectively inaccessible.
+- Implemented by:
+  - [[System - Retention, Storage, and Key Scheme]] — the key scheme produces URLs whose capability is non-guessable (32 hex characters = 128 bits of entropy, drawn from a CSPRNG); the non-guessability property this Decision declares load-bearing is enforced structurally by that System.
 
 ## WHY: Rationale
 
@@ -52,7 +54,7 @@ The "narrow forever" commitment (F6) makes explicit that auth, accounts, and per
 - **URL leak equals access.** If a Reporter pastes the URL into a public GitHub issue and later wishes they hadn't, anyone who saw the URL has view + delete capability until the Report expires or is deleted. The mitigation is the 30-day retention ([[Decision - 30-Day Retention Default]]) and the delete button on the Report Metadata Page. The cost is accepted because the alternative — preventing URL leaks by adding auth — costs more than URL leaks do in practice for this product's traffic profile.
 - **No "list my uploads" view for Reporters.** A Reporter who uploaded a Debug Bundle yesterday and lost the URL has no way to recover it through this service. The service has no identity to attach uploads to, by design. The correct remedy is to upload again. The cost is accepted because building a "my uploads" view would require Reporter identity, which is out of scope by [[Principle - Narrow Forever]].
 - **Anyone with the URL can delete.** This is framed as a feature (the Reporter can delete their own Report; a Fabro Triager the Reporter shares the URL with can also delete if asked) and not a bug. Nothing in the service attempts to distinguish "original Reporter" from "anyone in possession of the URL," because there is no way to distinguish them without identity, and there is no identity. The cost is named rather than mitigated.
-- **Non-guessable URLs are load-bearing.** If an agent ever generates URLs with insufficient entropy (predictable IDs, short slugs, sequential numbers), the capability model collapses into no access control at all. The key scheme is part of the security model; it must produce URLs that cannot be reasonably brute-forced. That constraint is forwarded to `System - Retention, Storage, and Key Scheme` (manifest A5).
+- **Non-guessable URLs are load-bearing.** If an agent ever generates URLs with insufficient entropy (predictable IDs, short slugs, sequential numbers), the capability model collapses into no access control at all. The key scheme is part of the security model; it must produce URLs that cannot be reasonably brute-forced. That constraint is enforced by [[System - Retention, Storage, and Key Scheme]] (32 hex characters = 128 bits of entropy from a CSPRNG).
 
 ### Scope of Applicability
 
@@ -76,10 +78,10 @@ Confirmed 2026-04-22 by the product owner in the Confirmed Product Decisions sec
 
 ### Following This Decision
 
-- The `fabro report` CLI uploads a Debug Bundle and returns a short URL. The URL contains enough entropy that guessing it is computationally infeasible. No login step; no credential capture; the Reporter shares the URL out-of-band however they choose.
+- The `fabro dump --upload` (or `fabro upload`) CLI uploads a Debug Bundle and returns a short URL. The URL contains enough entropy that guessing it is computationally infeasible. No login step; no credential capture; the Reporter shares the URL out-of-band however they choose.
 - The Report Metadata Page at that URL renders on any request to the URL, regardless of who is requesting. There is no session cookie, no CSRF token tied to a login, no access-check step beyond "can the request reach this URL." The delete button on that page submits an action that requires no additional authentication — possession of the URL is the whole authorization.
 - A Triager who needs to investigate a Debug Bundle copies the Report ID out of the shared URL and retrieves the bundle from S3 using their own AWS credentials. The service plays no role in that path. The service's S3 bucket is configured so that direct S3 access requires the team's AWS identity, which is orthogonal to the capability URL.
-- The key scheme (see `System - Retention, Storage, and Key Scheme`, manifest A5, not yet drafted) produces IDs and URLs with sufficient entropy that brute-forcing valid URLs is not a practical attack vector. That entropy requirement is part of this Decision's enforceability.
+- The key scheme (see [[System - Retention, Storage, and Key Scheme]]) produces IDs and URLs with sufficient entropy that brute-forcing valid URLs is not a practical attack vector. That entropy requirement is part of this Decision's enforceability.
 
 ### Violating This Decision
 

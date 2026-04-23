@@ -27,6 +27,9 @@ This Principle exists because "narrow" is a word that decays. Every software pro
   - [[Component - Report Metadata Page]] — page-content expansion (extra fields, tabs, sections, navigation) is on this Principle's permanently-out-of-scope list; the Component card's four-element structural contract is the page-layer expression of narrow-forever.
   - [[Standard - Competitive Context]] — re-surveying competitors to find "features worth adding" is itself a drift-shaped activity under this Principle; the one-pager closes the competitive-analysis question rather than opening it.
   - [[Standard - Information Architecture]] — IA growth (home pages, listings, per-user views, team dashboards, browse endpoints) is on this Principle's permanently-out-of-scope list; the IA Standard is the page-and-route-layer expression of narrow-forever.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — additional CLI subcommands (`fabro reports list`, `fabro report status`), post-upload feedback prompts, and multi-step delete flows are on this Principle's permanently-out-of-scope list; the three-command surface plus one-click delete is the interaction-layer expression of narrow-forever.
+  - [[Standard - Accessibility Policy]] — the accessibility floor is bounded by the two surfaces this Principle keeps permanently small (CLI + one web page). No compliance program grows here because the surface does not grow.
+  - [[System - Retention, Storage, and Key Scheme]] — alternate retention tiers, content-addressed layouts, per-team bucket prefixes, and additional storage mechanisms are scope expansions under this Principle; the one-bucket / one-lifecycle-rule / one-key-scheme layout is the storage-layer expression of narrow-forever.
 
 ## WHY: Belief
 

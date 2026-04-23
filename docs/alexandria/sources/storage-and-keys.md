@@ -14,12 +14,14 @@
 - **New dedicated S3 bucket** for `fabro.report`.
 - **Not shared** with any other Fabro infrastructure. Isolated blast radius; isolated retention policy; isolated IAM boundary.
 - **Access model:** private bucket. Public read is NOT enabled. The Fargate task has write access via its IAM role; Triagers read directly using their own AWS credentials (per A2 `Agent - Triager`).
-- **Region:** not specified in this source; assume the Fargate task's region (likely `us-east-1` or `us-west-2`).
+- **Default bucket name:** `fabro-report-bundles` (confirmed 2026-04-23). Overridable via environment variable so staging / dev / alternate deployments can use different bucket names without code changes.
+- **Region:** `us-east-1` by default (confirmed 2026-04-23), overridable via environment variable.
 
 ### Key Scheme
 
-- **Date-partitioned keys.** Structure: `<YYYY>/<MM>/<DD>/<id>.tar.gz` or similar.
-- Rationale: natural partition for browsing, easy to correlate with retention lifecycle, no overhead from flat namespace listing.
+- **Date-partitioned keys, per-Report directory.** Structure: `<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz` plus `<YYYY>/<MM>/<DD>/<id>/metadata.json` (confirmed 2026-04-23).
+- Each Report gets its own "directory" (S3 prefix) containing both the Debug Bundle tarball and a sidecar metadata JSON file. This lets the bundle and its metadata expire together under the S3 lifecycle rule, and makes single-Report deletion a prefix delete rather than two separate key deletes.
+- Rationale: natural partition for browsing by date, easy to correlate with retention lifecycle, no overhead from flat namespace listing, clean atomicity at the per-Report level.
 - Date granularity: daily partition is the working default. Can be adjusted if volume demands (unlikely given the product's internal-support use case).
 
 ### Report URL Format
@@ -40,13 +42,14 @@
 - This is the correct choice: zero operational overhead, survives service downtime, survives code changes, cannot drift from the declared policy.
 - **Metadata and bundle expire together.** The retention deadline field on a Report (per F2 and A3) and the actual S3 object lifecycle must land on the same day. If metadata is stored as a sidecar JSON object in S3, it also expires via lifecycle; if metadata is stored out-of-band (e.g., in a small DynamoDB or the S3 object's own user-metadata), the retention story has to be engineered to match.
 
-## Implications Raven Observes (flag for review)
+### Metadata Storage Location (Confirmed 2026-04-23)
 
-- **Metadata storage location is unresolved.** The Report has fields (ID, URL, upload timestamp, bundle size, optional reporter message, Fabro version, arbitrary key/value metadata tags, retention deadline). Where do those live? Options:
-  - **Inside the S3 object's user-metadata** (via `x-amz-meta-*` headers). Simple, lifecycle-synced automatically, but size-limited (~2KB total metadata) and awkward for arbitrary key/value tags.
-  - **In a sidecar JSON object** adjacent to the bundle (`<date-path>/<id>.meta.json` next to `<date-path>/<id>.tar.gz`). Flexible, lifecycle-synced via identical prefix expiration, but requires a second S3 read at metadata-page render time.
-  - **In a small datastore** (DynamoDB, Postgres). More flexible, richer queries, but introduces a second service to manage and a second lifecycle policy to keep in sync. Probably overkill for this product.
-  - **Raven's best-guess:** sidecar JSON object co-located with the bundle. Keeps the single-store model, lifecycle auto-syncs, avoids the size-limit awkwardness of object user-metadata.
+- **Sidecar JSON object at `<date-path>/<id>/metadata.json`**, next to the Debug Bundle at `<date-path>/<id>/bundle.tar.gz`.
+- Per-Report directory layout (the `<id>/` segment) lets both files expire together under the S3 lifecycle rule and lets single-Report deletion be a prefix delete.
+- Report fields stored in the JSON: ID, URL, upload timestamp, bundle size, optional reporter message, Fabro version, arbitrary key/value metadata tags, retention deadline.
+- Trade-off accepted: metadata-page renders require a second S3 read (get the JSON before rendering the HTML). Acceptable for a minimal one-page receipt that's not on a hot path.
+
+## Implications Raven Observes (flag for review)
 - **Hex format is aesthetic as well as technical.** A 32-hex URL like `fabro.report/r/a3f8b29d01e4c76f2a1b8d39e5c07f4b` is long-ish. An alternative — base62 encoding of 128 bits = 22 characters — would be shorter. Bryan chose hex explicitly; assumed rationale: clearer-looking, case-insensitive-friendly, URL-safe without any encoding considerations. Keep hex.
 - **Browsing the bucket by date is now easy for Triagers.** `aws s3 ls s3://fabro-reports-bucket/2026/04/23/` lists a day's Reports. This is a small but real quality-of-life property.
 
@@ -54,9 +57,12 @@
 
 None of these block A5 drafting:
 
-1. **Metadata storage: sidecar JSON vs object user-metadata vs datastore?** Not explicitly decided. Raven recommends sidecar JSON.
-2. **What's the bucket name?** Likely `fabro-report-bundles` or similar. Not specified.
-3. **Does the URL redirect to a path including the date, or is `/r/<id>` the whole path?** The public URL format is `/r/<id>` with no date segment; the date partition is internal-only to S3. Confirm.
+1. **Does the URL redirect to a path including the date, or is `/r/<id>` the whole path?** The public URL format is `/r/<id>` with no date segment; the date partition is internal-only to S3. Confirm at implementation time.
+
+*Resolved 2026-04-23:*
+- Metadata storage → sidecar JSON object at `<date-path>/<id>/metadata.json`.
+- Bucket name → `fabro-report-bundles` default, env-var overridable.
+- Region → `us-east-1` default, env-var overridable.
 
 ## What This Source Does Not Cover
 

@@ -49,14 +49,13 @@ These are direct implications of the confirmed answers above. Sam should treat t
 - **Fargate over Fly is a deliberate AWS-native posture.** The service has a strong reason to be near S3 (IAM role-based S3 access is dramatically simpler when both live in AWS). A Fly.io deployment would require either long-lived AWS access keys in Fly secrets (worse security posture) or cross-cloud federation (more complex). Fargate is the right call.
 - **Docker as the packaging format is implicit.** Fargate runs containers; any Fargate service is a Dockerized service. No alternative considered.
 - **Terraform for IaC is a team-preference decision.** It is the industry default for AWS and matches the "we control our infrastructure explicitly" posture implied by AWS-native + Fargate + S3.
-- **The service is single-region unless stated otherwise.** Bryan did not specify a region. Default assumption: `us-east-1` or `us-west-2` matching Fabro's existing AWS footprint. Confirm at implementation time.
+- **Single-region deployment.** Default region is `us-east-1` (confirmed 2026-04-23), overridable via environment variable for alternate deployments.
 
 ## Open Questions (flagged for human judgment)
 
 None of these block Factory-mode implementation but should be resolved in a follow-up:
 
-1. **Which AWS region?** Not specified.
-2. **What's the CI/CD pipeline?** GitHub Actions is likely (Fabro uses it per `~/p/fabro-sh/fabro/.github/workflows/`), but not confirmed for this service.
+1. **What's the CI/CD pipeline?** GitHub Actions is likely (Fabro uses it per `~/p/fabro-sh/fabro/.github/workflows/`), but not confirmed for this service.
 3. **What Rust web framework?** Axum matches Fabro's `fabro-server`; could also be Actix or Rocket. Axum is the default assumption.
 4. **Is there a staging environment** or is production the only environment? Greenfield projects often skip staging; flag if that changes.
 5. **Database?** No database has been mentioned for this service. S3 is the only persistent store. Metadata per Report (ID, timestamp, size, message, Fabro version, tags, retention deadline) is presumably stored either in the S3 object's metadata or in a sidecar JSON object in S3. No relational database is implied. Confirm at implementation time.

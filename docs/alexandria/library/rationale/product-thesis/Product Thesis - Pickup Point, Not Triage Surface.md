@@ -24,12 +24,15 @@ Counter-thesis: "The URL is already in the user's hands, so the service might as
   - [[Decision - Capability URLs over Auth]] — a pickup point has two handoffs (Reporter-to-URL, URL-to-S3-for-Triagers), and neither involves authentication on this service; the Decision is the access-model coherence that makes the thesis structurally work.
   - [[Decision - No Content Dedup]] — a pickup point does not analyze what was dropped; the Decision refuses the content-analysis surface area dedup would introduce.
   - [[Decision - 30-Day Retention Default]] — a pickup point is a temporary handoff location; retention is structural to the thesis, and the Decision names the duration.
-  - [[Agent - Reporter]] — the drop-off endpoint of the pickup; interacts with the service only via `fabro report` CLI and optionally the Report Metadata Page. The Reporter's narrow shape is the thesis expressed at the role layer on the upload side.
+  - [[Agent - Reporter]] — the drop-off endpoint of the pickup; interacts with the service only via the `fabro dump --upload` (or `fabro upload`) CLI path and optionally the Report Metadata Page. The Reporter's narrow shape is the thesis expressed at the role layer on the upload side.
   - [[Agent - Triager]] — the pickup endpoint; retrieves the Debug Bundle from S3 with their own AWS credentials and never interacts with the intake service. The Triager's no-service-surface shape is the structural condition that makes "pickup, not triage" coherent.
   - [[Component - Report]] — the first-class entity created when the pickup succeeds; the Report is what "the URL exists" means in this thesis, and its authoritative field set is calibrated to "confirm a Debug Bundle arrived and let the Reporter delete it" — nothing that would serve a triage workflow.
   - [[Component - Report Metadata Page]] — the one rendered surface the thesis allows; its four-element content (ID, upload timestamp, bundle size, delete button) is the exact measurable signal this thesis's Validation Criteria names.
   - [[Standard - Competitive Context]] — the competitive-analysis one-pager that closes the "should we survey adjacent products?" question by citing this thesis; the thesis is what makes the borrowing stop at intake shape.
   - [[Standard - Information Architecture]] — the IA Standard that expresses the thesis's minimal surface as an explicit spec: one CLI subcommand, one rendered page per Report, no navigation, no hierarchy.
+  - [[Standard - Interaction Patterns (CLI + Delete)]] — the CLI and delete-flow mechanics that keep the pickup-point interaction narrow; dump-and-upload, a progress bar, a one-click delete, and no post-upload feedback loop are the thesis expressed as concrete UX choices.
+  - [[Standard - Accessibility Policy]] — the two-surface accessibility floor (CLI `NO_COLOR`, web WCAG 2.2 AA) that keeps the thesis's minimal surface *usable* by everyone a self-hosted Fabro user might be.
+  - [[System - Retention, Storage, and Key Scheme]] — the data topology that makes the pickup-point thesis structurally coherent: one bucket, one lifecycle rule, per-Report directories, capability URLs; the thesis's "URL exists; service's job ends" shape in infrastructure terms.
 - Template reference:
   - `bun.report` at `~/p/oven-sh/bun.report` — borrowed for intake URL shape only, explicitly NOT used as a template for downstream processing, rendering, symbolication, feedback, or triage UI.
 
@@ -41,7 +44,7 @@ Stated positively: this product is a pickup point. A Reporter drops a bundle; a 
 
 ## Validation Criteria
 
-- **Following:** A Reporter can run `fabro report`, receive a URL, and share it. A Triager can retrieve the bundle from S3 using their own credentials. Neither workflow requires the service to render, inspect, or summarize bundle contents.
+- **Following:** A Reporter can run `fabro dump --upload`, receive a URL, and share it. A Triager can retrieve the bundle from S3 using their own credentials. Neither workflow requires the service to render, inspect, or summarize bundle contents.
 - **Invalidated by:** A feature request that can only be satisfied by the service rendering bundle contents, symbolicating crashes, offering feedback collection, or presenting a team triage UI. If such a feature is accepted rather than routed to a different product or tool, the thesis has been abandoned.
 - **Measurable signals:** Receipt page displays only metadata (Report ID, upload timestamp, bundle size, delete button). CLI output communicates only what is needed to share the URL. Zero endpoints expose bundle contents via the service. Triagers retrieve bundles directly from S3.
 
@@ -53,7 +56,7 @@ New product, no past. Confirmed as a permanent identity decision on 2026-04-22 b
 
 ### What Following This Looks Like
 
-- A Reporter hits a bug, runs `fabro report`, the CLI uploads the tarball to S3, and prints a short URL. The receipt page at that URL shows Report ID, upload timestamp, bundle size, and a delete button. Nothing else.
+- A Reporter hits a bug, runs `fabro dump --upload`, the CLI produces the tarball and uploads it to S3, and prints a short URL. The receipt page at that URL shows Report ID, upload timestamp, bundle size, and a delete button. Nothing else.
 - A Triager sees the URL shared in a GitHub issue, copies the Report ID out of it, and fetches the bundle from S3 using their own AWS credentials. The service plays no role in their triage workflow.
 - A feature request arrives asking for structured display of crash metadata. It is routed to a separate triage tool (or Fabro's own internal tooling), not implemented here.
 

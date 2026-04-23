@@ -25,8 +25,10 @@ A **Triager** is a member of the Fabro team (currently Bryan + team) who retriev
   - [[Component - Report]] — the Report carries the ID a Triager copies out of the shared URL to locate the Debug Bundle in S3. The Report's URL is the capability for view + delete on the Metadata Page (Triager's incidental use); the Report ID alone — extracted from the URL — is what the Triager uses against S3 with their own AWS credentials.
   - [[Component - Report Metadata Page]] — the only surface the Triager ever touches on the service, and only incidentally (to click delete when a Reporter shares the URL and asks for deletion). Any Triager-specific capability on this page is a violation of the no-service-surface shape defined here.
   - [[Standard - Information Architecture]] — A6 captures the commitment that the Triager does not traverse the service's IA at all; Triager-side aggregation is done with `aws` tooling against the S3 bucket, not through any endpoint on this service.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Retention, Storage, and Key Scheme` (manifest A5) — the S3 key layout determines how a Triager translates a Report ID from a URL into an S3 path for retrieval; the key scheme is the only structural contract between this service and the Triager's retrieval path.
+- Retrieval contract:
+  - [[System - Retention, Storage, and Key Scheme]] — the S3 key layout determines how a Triager translates a Report ID from a URL into an S3 path for retrieval; the date-partitioned `<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz` key scheme is the only structural contract between this service and the Triager's retrieval path.
+- Accessibility:
+  - [[Standard - Accessibility Policy]] — names the Triager explicitly as someone who does not use the service's surfaces, so no Triager-facing accessibility surface exists on the service; the only Triager-incidental surface is the delete button on the Report Metadata Page, which inherits the WCAG 2.2 AA + keyboard-first floor from that Standard.
 
 ## WHY: Rationale
 
@@ -64,7 +66,7 @@ A Triager is typically prompted into action by seeing a `fabro.report` URL in a 
 
 ### Examples
 
-- **Example 1 — routine retrieval.** A Reporter pastes a `fabro.report` URL into a GitHub issue titled "cargo install hangs on CI." A Triager sees the issue, copies the URL, extracts the Report ID from it, runs `aws s3 cp s3://fabro-reports-bucket/<key-derived-from-Report-ID> ./bundle.tar.gz` (or the team's equivalent wrapper) using their own AWS credentials, untars the bundle, and begins investigation. The `fabro.report` service is not consulted at any step of the retrieval; it played no role after the Reporter's upload. See `System - Retention, Storage, and Key Scheme` (manifest A5, not yet drafted) for the actual key mapping.
+- **Example 1 — routine retrieval.** A Reporter pastes a `fabro.report` URL into a GitHub issue titled "cargo install hangs on CI." A Triager sees the issue, copies the URL, extracts the Report ID from it, runs `aws s3 cp s3://fabro-report-bundles/<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz ./bundle.tar.gz` (or the team's equivalent wrapper) using their own AWS credentials, untars the bundle, and begins investigation. The `fabro.report` service is not consulted at any step of the retrieval; it played no role after the Reporter's upload. See [[System - Retention, Storage, and Key Scheme]] for the full key mapping.
 - **Example 2 — Reporter asks for deletion after the fact.** A Reporter DMs a Triager a day after filing the issue and asks for the Report to be deleted because the Debug Bundle contained something sensitive. The Triager visits the URL, clicks the delete button, confirms the deletion, and is done. This interaction uses the Triager's URL possession as the authorization, not any Triager-specific privilege — any Reporter in possession of the URL could have done the same. See [[Decision - Capability URLs over Auth]].
 
 ### Anti-Examples
