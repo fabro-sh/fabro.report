@@ -76,8 +76,8 @@ Build after Foundation. These enrich the Foundation frame with structure and con
 | # | Card | Type | Area | Zone | Build Order | Source Status | Intent |
 |---|------|------|------|------|-------------|---------------|--------|
 | C1 | `Standard - Competitive Context` | Standard | 1.4 | `/rationale/` | 7 | EXISTS (closed as one-pager per Conan Open Flag 3; filename short form, subtitle "What to Borrow, What to Skip" lives inside the card) | bun.report as template; paste services + support-bundle uploaders named-to-close, not surveyed. Ratified 2026-04-23. |
-| C2 | `Standard - Design System (Receipt Page + CLI Output)` | Standard | 4.1 | `/rationale/` | 8 | ABSENT | Typography, spacing, color, copy conventions for receipt page. CLI output conventions. Source has no visual direction. |
-| C3 | `Standard - Receipt Page Sketch` | Standard | 4.3 | `/rationale/` | 9 | ABSENT | One-page sketch with labels. Source describes the page content but not its layout. |
+| C2 | `Standard - Design System (Receipt Page + CLI Output)` | Standard | 4.1 | `/rationale/` | 8 | EXISTS (as of 2026-04-23 via `receipt-page-visual-direction.md`) | Dark-mode-only; typography (Geist + JetBrains Mono) + colors (Fabro semantic tokens) lifted from `~/p/fabro-sh/fabro/apps/fabro-web/app/app.css`. Narrow ~500px column, terminal-style metadata rows, Fabro symbol/logotype per "never both together" rule. CLI output conventions cross-reference F4 + A7 at register level. |
+| C3 | `Standard - Receipt Page Sketch` | Standard | 4.3 | `/rationale/` | 9 | EXISTS (as of 2026-04-23 via `receipt-page-visual-direction.md`) | ASCII sketch in source: centered narrow column, metadata rows (ID / Uploaded / Size), secondary text-link delete affordance, symbol-only footer. Generic 404 for expired + deleted states. |
 | C4 | `Decision - Who This Service Is For` | Decision | 1.5 | `/rationale/` | 10 | EXISTS | Self-hosted Fabro users, primary and only. Hosted-Fabro bundles are explicitly deferred. Source has this — just needs to be a proper Decision card. |
 
 ---
@@ -207,15 +207,13 @@ C2 and C3 remain blocked on visual direction.
 
 ## Blocked Cards
 
-| Card | Blocker | Unblock By |
-|---|---|---|
-| C2 `Standard - Design System` | No visual direction captured | Bryan provides receipt-page visual direction; source-material file created. |
-| C3 `Standard - Receipt Page Sketch` | No sketch exists | Same blocker as C2 — draft together. |
+*(None — all 24 manifested cards have source material.)*
 
+*Resolved 2026-04-23 late (sources captured, unblocked):* C2, C3 (receipt-page visual direction from Fabro web UI — dark-mode-only, Geist + JetBrains Mono, Fabro semantic color tokens, narrow ~500px centered column).
 *Resolved 2026-04-23 (sources captured, unblocked):* F4, A5, A7, A8.
 *Resolved 2026-04-22:* C1 (closed as one-pager per Open Flag 3 — no survey needed).
 
-**Only 2 of 19 cards remain blocked,** both on visual direction for the Report Metadata Page.
+**All 24 manifested cards are now draftable from source or already drafted.** 22 drafted and ratified through commit `b3ae2a6`; C2 and C3 pending Sam drafting against the new `receipt-page-visual-direction.md` source.
 
 ---
 
