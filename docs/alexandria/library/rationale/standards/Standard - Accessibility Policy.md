@@ -20,6 +20,9 @@ The **accessibility floor** for `fabro.report` across its two user-facing surfac
   - [[Principle - Narrow Forever]] — the surface governed by this Standard is the surface forever. Accessibility work done at the 2.2 AA floor for the Report Metadata Page does not grow into a larger compliance program because the product does not grow additional surfaces.
 - Vocabulary:
   - [[Standard - Noun Vocabulary]] — accessibility copy (ARIA labels, heading text, delete-confirmation prompts) uses canonical names exactly. "Report Metadata Page" in `<title>` and heading elements, not "receipt page" or "status page"; "Delete Report" on the button, not "Delete" or "Remove."
+- Rendering posture:
+  - [[Decision - Service Stack]] — A12's server-side-rendered HTML commitment is what makes the web-accessibility floor structurally cheap. There is no SPA build pipeline to audit; the Report Metadata Page is rendered by the Rust service and delivered as HTML, which is the simplest path to WCAG 2.2 AA conformance. Topology changes that introduce a client-rendered front-end would move the accessibility surface.
+  - [[System - Service Topology]] — the SSR-HTML pipeline this Standard's floor applies to runs on the Fargate task named in A14. Topology changes that move rendering off Fargate (to edge workers, to a client-side SPA build) would move the accessibility surface and would need to clear this Standard explicitly.
 - Blocked cross-reference:
   - `Standard - Design System` (manifest C2, blocked on visual direction) — C2 owns color choices and typography for the Report Metadata Page. Color contrast minimums (WCAG 2.2 AA: 4.5:1 for body text, 3:1 for large text and UI components) are an accessibility floor that C2's color palette must respect. This cross-reference is a plain-text forward reference until C2 is drafted.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):

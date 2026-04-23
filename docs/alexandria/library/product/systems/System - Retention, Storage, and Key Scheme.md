@@ -2,7 +2,7 @@
 
 ## WHAT: Definition
 
-The **data-topology system** that gives `fabro.report` its retention, storage, and identifier mechanics. One S3 bucket, one lifecycle rule, one key scheme, one URL shape — each chosen so that the policy commitments made in [[Decision - 30-Day Retention Default]], [[Decision - Capability URLs over Auth]], and [[Decision - No Content Dedup]] are enforced by infrastructure rather than by application code. Specifically: a dedicated S3 bucket (`fabro-report-bundles` by default, env-overridable) in `us-east-1` (also env-overridable); date-partitioned per-Report keys of the form `<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz` with a sidecar `<YYYY>/<MM>/<DD>/<id>/metadata.json`; public URLs of the form `fabro.report/r/<32-hex-chars>` (128 bits of entropy); and a Terraform-declared S3 lifecycle rule that expires every object 30 days after creation. This System card is paired with `System - Service Topology` (manifest A14, not yet drafted) — that card owns the **compute/DNS/IAM** topology; this card owns the **data** topology. Different change frequencies, different concerns, separate cards.
+The **data-topology system** that gives `fabro.report` its retention, storage, and identifier mechanics. One S3 bucket, one lifecycle rule, one key scheme, one URL shape — each chosen so that the policy commitments made in [[Decision - 30-Day Retention Default]], [[Decision - Capability URLs over Auth]], and [[Decision - No Content Dedup]] are enforced by infrastructure rather than by application code. Specifically: a dedicated S3 bucket (`fabro-report-bundles` by default, env-overridable) in `us-east-1` (also env-overridable); date-partitioned per-Report keys of the form `<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz` with a sidecar `<YYYY>/<MM>/<DD>/<id>/metadata.json`; public URLs of the form `fabro.report/r/<32-hex-chars>` (128 bits of entropy); and a Terraform-declared S3 lifecycle rule that expires every object 30 days after creation. This System card is paired with [[System - Service Topology]] — that card owns the **compute/DNS/IAM** topology; this card owns the **data** topology. Different change frequencies, different concerns, separate cards.
 
 ## WHERE: Ecosystem
 
@@ -25,9 +25,9 @@ The **data-topology system** that gives `fabro.report` its retention, storage, a
   - [[Standard - Information Architecture]] — A6 defers the exact S3 key layout and URL path shape to this System card. A6 names the endpoints and the one-CLI-one-page-per-Report contract; this card names the path strings and the key strings that satisfy it.
 - Referenced by:
   - [[Standard - Interaction Patterns (CLI + Delete)]] — A7's presigned-URL upload architecture coordinates with this System: the service mints a Report ID (32 hex chars, CSPRNG) and a presigned S3 PUT URL targeting the date-partitioned key that this card specifies. A7 names the CLI-visible behavior; this card names the path the bytes land at.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `System - Service Topology` (manifest A14) — the paired compute/DNS/IAM topology. That card will cite this card's bucket name and region; this card will cite that card's Fargate IAM role as the write principal. The two together describe the full deployed system.
-  - `Decision - Service Stack` (manifest A12) — the choice of Rust on AWS Fargate. The AWS-native IAM access path from Fargate to S3 is one of the load-bearing reasons for that choice; the two cards reference each other once A12 is drafted.
+- Paired topology and stack:
+  - [[System - Service Topology]] — the paired compute/DNS/IAM topology. A14 cites this card's bucket name and region; this card cites A14's Fargate IAM role as the write principal. The two together describe the full deployed system.
+  - [[Decision - Service Stack]] — the choice of Rust on AWS Fargate. The AWS-native IAM access path from Fargate to S3 is one of the load-bearing reasons for that choice; this System is the data-side expression of A12's stack commitment.
 - Source provenance:
   - `docs/alexandria/sources/storage-and-keys.md` — the raw material Bryan confirmed on 2026-04-23. Authoritative for every numeric choice in this card (128 bits, 30 days, 32 hex characters, `us-east-1`, `fabro-report-bundles`).
 
@@ -43,7 +43,7 @@ The paired *per-Report directory* layout (`<id>/bundle.tar.gz` + `<id>/metadata.
 
 Drafted 2026-04-23 from source material captured the same day (`docs/alexandria/sources/storage-and-keys.md`). Stable. Revisions to the numeric choices — bucket name default, region default, entropy floor, date-partition granularity, lifecycle duration — are source-level changes that feed back into this card. Revisions to the *mechanisms* — replacing S3 lifecycle with cron, swapping the key scheme for a content-addressed one, raising or lowering the entropy floor — are policy-level changes that revisit the Decisions this System implements, not implementation-level refactors.
 
-Paired with `System - Service Topology` (manifest A14, not yet drafted). A14 will be drafted alongside or immediately after this card and will cite this card's bucket as its storage dependency; this card cites A14's Fargate IAM role as its write-side principal. Until A14 exists, that cross-reference stays a plain-text forward reference.
+Paired with [[System - Service Topology]] (drafted 2026-04-23 in the same follow-on batch). A14 cites this card's bucket as its storage dependency; this card cites A14's Fargate IAM role as its write-side principal.
 
 ## HOW: Specification
 

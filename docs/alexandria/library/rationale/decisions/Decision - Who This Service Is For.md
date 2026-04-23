@@ -24,6 +24,7 @@ The load-bearing phrasing is *self-hosted, primary and only*. "Self-hosted" name
   - [[Agent - Reporter]] — inherits the self-hosted-only audience from this Decision; the Reporter role as written describes a Fabro user running Fabro on their own systems, not a hosted-Fabro user or a generic "anyone with a Debug Bundle" Reporter.
   - [[Agent - Triager]] — the Triager's retrieval model (own AWS credentials, direct S3 access) is also tied to the self-hosted audience shape; widening the Triager definition (e.g., to third-party support partners, or to hosted-Fabro team members) is an audience change under this Decision.
   - [[Standard - Competitive Context]] — the competitive-analysis one-pager scopes comparisons to the self-hosted-Fabro-user audience named here; adjacent products serving different populations (managed offerings, crash-report SaaS, file-sharing services) are structurally unhelpful comparisons because their optimization targets differ.
+  - [[Decision - Service Stack]] — the stack is chosen to fit the self-hosted audience's realistic traffic profile (single-task Fargate, single-region default); an audience change under this Decision is one of the conditions A12 names as triggering a revisit.
 
 ## WHY: Rationale
 

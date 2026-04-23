@@ -30,6 +30,11 @@ The load-bearing phrasing is *the URL is the whole access-control mechanism*. An
   - [[Standard - Accessibility Policy]] — the delete-confirmation accessibility requirement is load-bearing precisely because the delete action is the one Reporter-initiated capability on the service after upload under this Decision; if the confirmation is inaccessible, the capability is effectively inaccessible.
 - Implemented by:
   - [[System - Retention, Storage, and Key Scheme]] — the key scheme produces URLs whose capability is non-guessable (32 hex characters = 128 bits of entropy, drawn from a CSPRNG); the non-guessability property this Decision declares load-bearing is enforced structurally by that System.
+  - [[System - Service Topology]] — the service-side half of the access model (Fargate task mints presigned S3 URLs via its IAM role) and the Triager-side half (Triagers retrieve from S3 with their own AWS credentials, a separate IAM principal) both live in that topology. This Decision names the access model; A14 names the operational pieces that implement it.
+- Stack dependency:
+  - [[Decision - Service Stack]] — the capability-URL model depends on AWS-native IAM for the service-side presigned-URL mint and Triager-side S3 retrieval. A12's AWS-native posture is what makes this Decision's access model operationally coherent without cross-cloud credential management.
+- Observability boundary:
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — Sentry context respects the no-identity shape this Decision establishes. Reporter identity is never captured in Sentry events (no IP tied to a Reporter, no user-agent identifier linked across uploads); the operational-monitoring path preserves the access model's identity posture.
 
 ## WHY: Rationale
 

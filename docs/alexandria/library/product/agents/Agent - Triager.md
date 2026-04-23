@@ -27,6 +27,7 @@ A **Triager** is a member of the Fabro team (currently Bryan + team) who retriev
   - [[Standard - Information Architecture]] — A6 captures the commitment that the Triager does not traverse the service's IA at all; Triager-side aggregation is done with `aws` tooling against the S3 bucket, not through any endpoint on this service.
 - Retrieval contract:
   - [[System - Retention, Storage, and Key Scheme]] — the S3 key layout determines how a Triager translates a Report ID from a URL into an S3 path for retrieval; the date-partitioned `<YYYY>/<MM>/<DD>/<id>/bundle.tar.gz` key scheme is the only structural contract between this service and the Triager's retrieval path.
+  - [[System - Service Topology]] — the Triager's retrieval path is a separate IAM principal (the Fabro team member's own AWS credentials) orthogonal to the Fargate task role. A14 names the service-side half of S3 access; the Triager half is outside the service topology entirely, which is how "never interacts with the intake service itself" holds up at the operational layer.
 - Accessibility:
   - [[Standard - Accessibility Policy]] — names the Triager explicitly as someone who does not use the service's surfaces, so no Triager-facing accessibility surface exists on the service; the only Triager-incidental surface is the delete button on the Report Metadata Page, which inherits the WCAG 2.2 AA + keyboard-first floor from that Standard.
 

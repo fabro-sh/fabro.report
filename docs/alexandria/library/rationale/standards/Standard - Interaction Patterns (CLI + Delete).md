@@ -16,12 +16,17 @@ The **interaction-pattern spec** for the two surfaces a Reporter actually touche
   - [[Component - Report Metadata Page]] — the delete-confirmation flow specified here runs on that page. This Standard owns the *interaction mechanics* of the delete button (client-side confirmation, keyboard-first operation); A4 owns the page's structural elements (ID, timestamp, size, button).
 - Access-model coupling:
   - [[Decision - Capability URLs over Auth]] — the delete button authorizes solely by URL possession; there is no additional credential check, no CSRF token tied to a login, no "are you the owner" step. The client-side confirmation prevents accidental clicks; it does not implement authorization.
+- Observability boundary:
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — the Reporter-facing error register specified in this Standard is never overlaid with Sentry-shaped artifacts (event IDs, "please report this crash" links, Sentry dashboard URLs). A13 keeps operational monitoring invisible to Reporters; this Standard's error output is the only surface the Reporter sees.
 - Scope commitments:
   - [[Product Thesis - Pickup Point, Not Triage Surface]] — the interaction surface is a CLI upload and a one-page delete affordance. Anything beyond that (dashboards, lists, post-upload feedback surfaces) is thesis-level drift, not an interaction-pattern decision this Standard can make.
   - [[Principle - Narrow Forever]] — the three-command surface is the permanent command surface. Additional subcommands (`fabro reports list`, `fabro report status`, `fabro upload watch`) are scope expansions, not interaction-pattern additions.
   - [[Principle - Reject Like bun.report Drift]] — `bun.report`-shaped interaction patterns (post-upload feedback prompt, symbolication-status view, "your team is reviewing" line) are named drift. The interaction surface stops at confirmation + URL + optional delete.
 - Storage mechanism (referenced, not owned):
   - [[System - Retention, Storage, and Key Scheme]] — the presigned-URL upload flow (bundle bytes never traverse the service's Fargate compute) is summarized here as a load-bearing architectural property that affects the CLI's behavior (the CLI talks to two endpoints: the service for coordination, and S3 directly for bytes). The key scheme, URL entropy, bucket layout, and retention mechanism live in that System card.
+- Service topology (referenced, not owned):
+  - [[Decision - Service Stack]] — the presigned-URL architecture is coherent because the compute and the storage live in the same cloud under a shared IAM boundary. A12's AWS-native posture is what makes A7's "bundle bytes never traverse Fargate" property operationally cheap.
+  - [[System - Service Topology]] — the operational topology A7's interaction paths traverse (DNS → Fargate for coordination; CLI → S3 for bytes). A14 names the topology pieces; this Standard names the Reporter-facing interaction on top of them.
 - Dedup posture (referenced, not owned):
   - [[Decision - No Content Dedup]] — the CLI does **not** hash the Debug Bundle and check for a prior upload before sending. A Reporter who uploads the same tarball twice produces two Reports with two URLs; the service does not notice. This Standard enforces that posture by not adding a pre-upload content-check step.
 - Paired accessibility floor:

@@ -33,6 +33,9 @@ Counter-thesis: "The URL is already in the user's hands, so the service might as
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the CLI and delete-flow mechanics that keep the pickup-point interaction narrow; dump-and-upload, a progress bar, a one-click delete, and no post-upload feedback loop are the thesis expressed as concrete UX choices.
   - [[Standard - Accessibility Policy]] — the two-surface accessibility floor (CLI `NO_COLOR`, web WCAG 2.2 AA) that keeps the thesis's minimal surface *usable* by everyone a self-hosted Fabro user might be.
   - [[System - Retention, Storage, and Key Scheme]] — the data topology that makes the pickup-point thesis structurally coherent: one bucket, one lifecycle rule, per-Report directories, capability URLs; the thesis's "URL exists; service's job ends" shape in infrastructure terms.
+  - [[Decision - Service Stack]] — the stack-layer commitment (Rust on AWS Fargate, Terraform-provisioned, SSR HTML) that keeps the pickup-point infrastructure as narrow as the pickup-point feature surface.
+  - [[System - Service Topology]] — the operational-topology expression of the pickup-point thesis: one Fargate task, one DNS record, one IAM role, one Terraform repository. Anything that proposes a second service or a second storage surface is topology drift against the thesis.
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — a pickup point's operational monitoring asks "is the pickup itself functioning?", not "what was dropped off?". A13's operational-only Sentry scope is the observability-layer expression of the pickup-point thesis; bundle-as-crash-payload forwarding would be a triage-surface move this thesis refuses.
 - Template reference:
   - `bun.report` at `~/p/oven-sh/bun.report` — borrowed for intake URL shape only, explicitly NOT used as a template for downstream processing, rendering, symbolication, feedback, or triage UI.
 
@@ -50,7 +53,7 @@ Stated positively: this product is a pickup point. A Reporter drops a bundle; a 
 
 ## WHEN: Timeline
 
-New product, no past. Confirmed as a permanent identity decision on 2026-04-22 by the product owner: "narrow forever" is an identity commitment, not a v1 simplification. No successor, no predecessor. Will pair with `Principle - Narrow Forever (Roadmap as Commitment)` (manifest F6, not yet drafted) for the commitment side of this stance.
+New product, no past. Confirmed as a permanent identity decision on 2026-04-22 by the product owner: "narrow forever" is an identity commitment, not a v1 simplification. No successor, no predecessor. Paired with [[Principle - Narrow Forever]] for the commitment side of this stance.
 
 ## HOW: Application
 

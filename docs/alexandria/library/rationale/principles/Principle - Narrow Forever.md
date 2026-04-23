@@ -30,6 +30,9 @@ This Principle exists because "narrow" is a word that decays. Every software pro
   - [[Standard - Interaction Patterns (CLI + Delete)]] — additional CLI subcommands (`fabro reports list`, `fabro report status`), post-upload feedback prompts, and multi-step delete flows are on this Principle's permanently-out-of-scope list; the three-command surface plus one-click delete is the interaction-layer expression of narrow-forever.
   - [[Standard - Accessibility Policy]] — the accessibility floor is bounded by the two surfaces this Principle keeps permanently small (CLI + one web page). No compliance program grows here because the surface does not grow.
   - [[System - Retention, Storage, and Key Scheme]] — alternate retention tiers, content-addressed layouts, per-team bucket prefixes, and additional storage mechanisms are scope expansions under this Principle; the one-bucket / one-lifecycle-rule / one-key-scheme layout is the storage-layer expression of narrow-forever.
+  - [[Decision - Service Stack]] — stack expansion (second runtime language, SPA front-end, cross-cloud deployment, ClickOps-managed resources) is a scope vector this Principle rules out at the infrastructure layer; the single-stack commitment is the stack-level expression of narrow-forever.
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — observability-surface expansion (Sentry-as-bundle-processor, Reporter-facing Sentry links, telemetry beyond service-side errors) is ruled out here; the scoped-to-service-errors-only choice is the observability-layer expression of narrow-forever.
+  - [[System - Service Topology]] — topology expansion (microservices, queues, databases, caches, sidecar containers, multi-region active-active) is a scope vector this Principle rules out at the operational layer; the minimal one-task-one-bucket-one-repo topology is the operational-layer expression of narrow-forever.
 
 ## WHY: Belief
 

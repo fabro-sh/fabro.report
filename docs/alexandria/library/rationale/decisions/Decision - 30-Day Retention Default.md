@@ -23,6 +23,8 @@ The load-bearing phrasing is *30 days, same for every Report, Reporter-immutable
   - [[Component - Report]] — the Report carries a retention deadline computed as upload timestamp plus 30 days; the Component card inherits this Decision for the deadline's default value and the Reporter-immutable commitment.
   - [[Component - Report Metadata Page]] — during the retention window the page renders on request; at the deadline the Report and its Debug Bundle are deleted and the URL resolves as not-found, with no rendered expired state.
   - [[Standard - Information Architecture]] — A6 captures the "expired Report returns not-found" shape as an IA-layer commitment; this Decision is the retention policy that produces the not-found state, and together they refuse a rendered expired / deleted tombstone page.
+  - [[Decision - Service Stack]] — the Terraform-declared S3 lifecycle rule that enforces retention is part of A12's IaC commitment; A12's stack choice is what makes retention enforcement a declarative infrastructure property rather than an application-side concern.
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — the narrow 30-day operational window is one of the forces that justifies Sentry-for-service-errors under A13 (bugs must be caught quickly because the service does not accumulate history).
 - Implemented by:
   - [[System - Retention, Storage, and Key Scheme]] — this System is the mechanism that enforces the 30-day rule. Terraform-declared S3 lifecycle rule (`expiration.days = 30`) runs server-side inside S3; no cron, no application-side sweeper.
 

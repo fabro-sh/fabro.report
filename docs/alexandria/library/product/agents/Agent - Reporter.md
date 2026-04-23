@@ -31,6 +31,8 @@ A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro dump --u
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the `fabro dump --upload` / `fabro upload` CLI UX specifics (progress indicator, error surface, success output, `--dry-run`) the Reporter actually experiences.
   - [[Standard - Accessibility Policy]] — the accessibility floor for the two surfaces the Reporter touches: CLI `NO_COLOR` support and WCAG 2.2 AA on the Report Metadata Page. A Reporter using a screen reader, operating the terminal without color, or navigating with the keyboard alone must still hit the pickup-point flow cleanly.
   - [[System - Retention, Storage, and Key Scheme]] — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
+  - [[System - Service Topology]] — the operational topology the Reporter's request flow traverses: DNS → Fargate for upload coordination and page render; CLI → S3 directly for bundle bytes.
+  - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — Reporters never see Sentry. The operational monitoring posture A13 names is invisible to the Reporter's CLI output, the Report Metadata Page, and every other Reporter-facing surface.
 
 ## WHY: Rationale
 
