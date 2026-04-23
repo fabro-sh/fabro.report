@@ -19,6 +19,13 @@ Counter-thesis: "The URL is already in the user's hands, so the service might as
   - [[Principle - Narrow Forever]] — the paired commitment that turns this thesis's scope into a permanent posture rather than a v1 simplification; names the permanently-out-of-scope list.
 - Tonal expression:
   - [[Principle - Minimal Public Surface Feels Calm]] — the aesthetic consequence of this thesis. A pickup point should *feel* like a pickup point: the Reporter drops a Debug Bundle, gets a URL back, and leaves. "Efficient and reassured" is the emotional shape of that interaction.
+- Referenced by:
+  - [[Decision - Who This Service Is For]] — the pickup-point thesis assumes both endpoints of the handoff (self-hosted Reporter, Fabro-team Triager); the Decision locks the audience the thesis depends on.
+  - [[Decision - Capability URLs over Auth]] — a pickup point has two handoffs (Reporter-to-URL, URL-to-S3-for-Triagers), and neither involves authentication on this service; the Decision is the access-model coherence that makes the thesis structurally work.
+  - [[Decision - No Content Dedup]] — a pickup point does not analyze what was dropped; the Decision refuses the content-analysis surface area dedup would introduce.
+  - [[Decision - 30-Day Retention Default]] — a pickup point is a temporary handoff location; retention is structural to the thesis, and the Decision names the duration.
+  - [[Agent - Reporter]] — the drop-off endpoint of the pickup; interacts with the service only via `fabro report` CLI and optionally the Report Metadata Page. The Reporter's narrow shape is the thesis expressed at the role layer on the upload side.
+  - [[Agent - Triager]] — the pickup endpoint; retrieves the Debug Bundle from S3 with their own AWS credentials and never interacts with the intake service. The Triager's no-service-surface shape is the structural condition that makes "pickup, not triage" coherent.
 - Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
   - `Domain - fabro.report Intake Service` (manifest A3/A4 context) — the single product domain that will embody this thesis.
 - Template reference:

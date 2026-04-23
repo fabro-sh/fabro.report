@@ -12,11 +12,15 @@ The canonical name, definition, and common-mistake list for every first-class en
   - [[Principle - Reject Like bun.report Drift]] — `bun.report` uses nouns like "Crash Report" and "Stack Trace" that belong to a different product category; drifting into that vocabulary signals a scope drift.
 - Referenced by:
   - [[Principle - Minimal Public Surface Feels Calm]] — the tone Principle depends on this Standard. Warm / conversational register does not override canonical names; user-facing strings must still use "Report," "Debug Bundle," "Reporter," "Triager," and "Report Metadata Page" as written here.
+  - [[Decision - Who This Service Is For]] — the Reporter definition (no identity, Fabro-version-only) is written for a self-hosted-Fabro Reporter; the Decision is the audience commitment that makes that definition coherent.
+  - [[Decision - Capability URLs over Auth]] — the Reporter-has-no-identity and Report-Metadata-Page-is-capability-URL-addressed entries in this Standard are the direct vocabulary consequence of that Decision.
+  - [[Decision - No Content Dedup]] — the one-Report-to-one-Debug-Bundle relationship in this Standard depends on not coalescing by content hash; the Decision preserves that vocabulary shape.
+  - [[Decision - 30-Day Retention Default]] — the Report's "retention deadline (default 30 days)" authoritative field takes its default value from the Decision.
+  - [[Agent - Reporter]] — must use "Reporter"; not "User," "Uploader," "Submitter." The Agent card expands the canonical definition into role context, goals, and anti-patterns, but inherits the exact wording here.
+  - [[Agent - Triager]] — must use "Triager"; not "Team Member," "Maintainer," "Responder." The Agent card expands the canonical definition into role context including the load-bearing "never interacts with the intake service itself" property recorded here.
 - Conforming forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted — each must use these exact terms when drafted):
   - `Component - Report` (manifest A3) — must use "Report," not "Upload," "Submission," or "Crash Report."
   - `Component - Report Metadata Page` (manifest A4) — must use this exact page name; not "Receipt Page," "Landing Page," "Status Page," "Dashboard."
-  - `Agent - Reporter` (manifest A1) — must use "Reporter"; not "User," "Uploader," "Submitter."
-  - `Agent - Triager` (manifest A2) — must use "Triager"; not "Team Member," "Maintainer," "Responder."
   - `System - Retention, Storage, and Key Scheme` (manifest A5) — must use "Debug Bundle" for the tarball; not "Payload," "Archive," "Dump."
 - Provenance:
   - `docs/alexandria/alexandria-config.json` → `discovery.confirmed_entities` — authoritative mirror. This card and the config must remain identical by design. Any drift between the two is a defect in one of them; treat this card as authoritative for card-authoring and the config as authoritative for tooling, and reconcile.

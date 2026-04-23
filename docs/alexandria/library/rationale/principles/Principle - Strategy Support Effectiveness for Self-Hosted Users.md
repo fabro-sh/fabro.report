@@ -26,8 +26,11 @@ The load-bearing trade: this Strategy optimizes for *the team can retrieve the D
   - **Self-hosted Fabro users** are the primary and only audience. Reporters in scope are those running Fabro on their own systems. A future hosted-Fabro offering's user bundles are **not in scope** under this Strategy; if hosted-Fabro users ever need bundle intake, that is a separate product question, not a scope expansion of `fabro.report`.
 - Referenced by:
   - [[Principle - Minimal Public Surface Feels Calm]] — the tonal expression of this Strategy. "Efficient and reassured" is the emotional shape of a Reporter who pastes the URL into the right place and gets back to work — which is how the Fabro team gets the Debug Bundle. Warmth that slows the handoff trades Reporter-facing polish against team-retrieval effort, which this Strategy rejects.
-- Forward references (planned in `docs/alexandria/inventory/card-manifest.md`, not yet drafted):
-  - `Decision - Who This Service Is For` (manifest C4) — formalizes the self-hosted-only audience as a Decision card; will cite this Principle as its rationale.
+  - [[Decision - Who This Service Is For]] — formalizes the self-hosted-only audience as a Decision card; cites this Principle as its direct governing rationale. The Decision is the audience-layer expression of this Strategy.
+  - [[Decision - Capability URLs over Auth]] — the access-model expression of this Strategy; auth would add friction to the Reporter's hand-off path, which is the opposite direction from what Strategy is optimizing for.
+  - [[Decision - 30-Day Retention Default]] — retention is calibrated to the realistic triage window for a self-hosted-support workflow, which is the retrieval shape Strategy is optimizing for.
+  - [[Agent - Reporter]] — the role this Strategy serves (self-hosted Fabro user handing off a Debug Bundle); the Reporter's narrow post-upload surface is the Strategy's concrete expression on the Reporter side of the pickup.
+  - [[Agent - Triager]] — the role this Strategy exists for (Fabro team member retrieving bundles); the Triager's no-service-surface shape — retrieving directly from S3 — is the Strategy's concrete expression on the team side of the pickup.
 
 ## WHY: Belief
 

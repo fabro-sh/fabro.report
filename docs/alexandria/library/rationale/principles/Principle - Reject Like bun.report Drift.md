@@ -14,6 +14,12 @@ Reject the specific drift pattern that occurs when a Factory-mode agent is told 
 - Referenced by:
   - [[Standard - Noun Vocabulary]] — drift often enters through imported vocabulary ("Crash Report," "Stack Trace," "Feedback Form") borrowed from `bun.report`; the vocabulary standard flags those imports as a symptom.
   - [[Principle - Minimal Public Surface Feels Calm]] — tone drift is a vector for `bun.report` drift. `bun.report`'s chattier web-product voice ("We've received your crash report!") is a tonal shape this Principle rejects on the same grounds it rejects feature-shape drift; tone drift is the earliest symptom of the cumulative failure mode this card names.
+  - [[Decision - Who This Service Is For]] — audience-layer drift ("let's also serve hosted-Fabro users") is the audience version of the feature-shape drift this Principle rejects; the Decision closes that escape hatch.
+  - [[Decision - Capability URLs over Auth]] — per-team auth, user accounts, and team dashboards are drift shapes this Principle enumerates; the Decision is the upstream access-model commitment those rejections appeal to.
+  - [[Decision - No Content Dedup]] — dedup proposals disguised as operational improvements are a drift pattern this Principle rejects; the Decision is the upstream commitment.
+  - [[Decision - 30-Day Retention Default]] — retention extension (per-Report overrides, indefinite retention tiers) is a drift shape this Principle names; the Decision locks the retention policy against that drift.
+  - [[Agent - Reporter]] — post-upload Reporter-facing enrichment (bundle-contents view, symbolicated stack, markdown-rendered logs, feedback prompts) is the paradigmatic drift shape; the Reporter's narrow post-upload surface as defined there is the role-layer expression of this Principle's rejection list.
+  - [[Agent - Triager]] — Triager-facing UI (team dashboards, listing endpoints, per-team scoping, in-service triage surfaces) is the drift shape this Principle enumerates most concretely; the Triager's no-service-surface shape as defined there is the role-layer commitment those rejections rely on.
 - Template being misread:
   - `bun.report` at `~/p/oven-sh/bun.report` — the product this drift borrows from. Only the intake URL shape is borrowed. Every feature listed in the Drift Examples section below exists in `bun.report` and must not be copied into `fabro.report`.
 - Contrast with:
