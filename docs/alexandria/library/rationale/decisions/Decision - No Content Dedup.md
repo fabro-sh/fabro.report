@@ -23,7 +23,7 @@ The load-bearing phrasing is *no content hash, no content identity, no coalescin
   - [[Component - Report Metadata Page]] — the page explicitly does not show symbolicated stacks, rendered logs, or any content-derived information; this Decision is the upstream commitment that makes "no content inspection" a structural property rather than an implementation choice.
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the CLI does not hash the Debug Bundle to check for a prior upload before sending; A7's command set enforces the no-dedup posture by not adding a content-check step. Duplicate uploads from the same Reporter produce two Reports, two URLs, and no service-side signal.
 - Implemented by:
-  - [[System - Retention, Storage, and Key Scheme]] — the storage layout assumes one Debug Bundle per Report; A5's Report IDs are cryptographically-random (not content-derived) and the key scheme does not model content-identity or reference counts.
+  - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — the storage layout assumes one Debug Bundle per Report; A5's Report IDs are cryptographically-random (not content-derived) and the key scheme does not model content-identity or reference counts.
 
 ## WHY: Rationale
 

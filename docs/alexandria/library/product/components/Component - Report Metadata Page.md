@@ -30,7 +30,7 @@ This card is a **structural** Component card, not a visual one. It describes wha
 - UX, accessibility, and mechanism:
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the delete confirmation flow on this page: client-side confirmation (`confirm()` or a custom modal), authorization via URL possession, and the register for any confirmation copy. The presence of a delete button is structural (this card); the confirmation flow around it is the Interaction Patterns card's concern.
   - [[Standard - Accessibility Policy]] — accessibility floor for this page (WCAG 2.2 AA, keyboard-first operation, semantic HTML, screen-reader support, delete-confirmation accessibility). Structural content is set here; accessibility constraints are set there.
-  - [[System - Retention, Storage, and Key Scheme]] — the URL shape this page is served at (`fabro.report/r/<32-hex-chars>`) and the S3 lifecycle mechanism that removes the page from service when a Report expires. Policy is in the Decisions cited above; mechanism is in A5.
+  - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — the URL shape this page is served at (`fabro.report/r/<32-hex-chars>`) and the S3 lifecycle mechanism that removes the page from service when a Report expires. Policy is in the Decisions cited above; mechanism is in A5.
   - [[Decision - Service Stack]] — the page is delivered as server-side-rendered HTML. A12 commits the stack to SSR-only; this Component card's content structure is rendered by the Rust service, not by a client-side framework.
   - [[System - Service Topology]] — the operational path a page-render request takes: DNS → Fargate task → (metadata JSON read from S3) → SSR HTML response. A14 names the pieces; this Component card names the content they produce.
 - Forward references (not yet drafted):
@@ -81,7 +81,7 @@ Access to the page is governed by [[Decision - Capability URLs over Auth]]. In p
 - No session cookie, no login step, no access-check on the render path beyond "can the request reach this URL."
 - The delete button submits a delete action that requires no additional authentication; possession of the URL is the authorization. See [[Decision - Capability URLs over Auth]] "Following This Decision" for the load-bearing phrasing.
 - There is no "only the original Reporter can delete" concept; the product cannot distinguish the original Reporter from anyone else in URL possession, and this is named as a cost (not a bug) in [[Decision - Capability URLs over Auth]] "What It Costs."
-- URL entropy (the property that makes capability URLs non-guessable) is a structural requirement on the URL / key scheme; see [[System - Retention, Storage, and Key Scheme]] (32 hex characters = 128 bits).
+- URL entropy (the property that makes capability URLs non-guessable) is a structural requirement on the URL / key scheme; see [[System - Debug Bundle Retention, Storage, and Key Scheme]] (32 hex characters = 128 bits).
 
 ### Expired-Report Behavior
 
@@ -115,7 +115,7 @@ Tone consistency between the CLI (which carries the same register) and this page
 - **Visual direction** — `Standard - Design System` (manifest C2). Typography, color, layout, spacing, page chrome. Blocked on product-owner input.
 - **Delete confirmation flow** — [[Standard - Interaction Patterns (CLI + Delete)]]. Client-side confirmation; authorization by URL possession; register inherited from [[Principle - Minimal Public Surface Feels Calm]].
 - **Accessibility** — [[Standard - Accessibility Policy]]. WCAG 2.2 AA, keyboard-first operation, semantic HTML, screen-reader behavior, focus handling on the delete confirmation.
-- **URL shape** — [[System - Retention, Storage, and Key Scheme]]. `fabro.report/r/<32-hex-chars>`, 128 bits of entropy, served from a per-Report S3 prefix.
+- **URL shape** — [[System - Debug Bundle Retention, Storage, and Key Scheme]]. `fabro.report/r/<32-hex-chars>`, 128 bits of entropy, served from a per-Report S3 prefix.
 
 The structural contract in this card is sufficient for a Conan review of the page's shape. Implementation requires the deferred cards to resolve first, or interim decisions from the product owner.
 

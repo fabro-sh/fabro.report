@@ -76,7 +76,7 @@ Each example below is a real drift risk implied by the `bun.report` template. Al
 ### What This Principle Does Not Forbid
 
 - Better error messages during upload, clearer failure modes, a crisper URL format, friendlier CLI copy. These help the Reporter hand off a bundle and are in scope.
-- Operational improvements invisible to Reporters: retention enforcement, S3 key layout, deletion semantics, metrics for the Fabro team's own monitoring. These are [[System - Retention, Storage, and Key Scheme]] concerns, not surface-expansion.
+- Operational improvements invisible to Reporters: retention enforcement, S3 key layout, deletion semantics, metrics for the Fabro team's own monitoring. These are [[System - Debug Bundle Retention, Storage, and Key Scheme]] concerns, not surface-expansion.
 - Adding metadata fields captured at upload time (arbitrary key/value tags already exist for this). This is explicitly allowed by the product decisions and does not expand the public surface.
 - Improvements to the `fabro dump` command in the parent Fabro repo. Bundle structure is owned there; that work is not drift and not in this library's scope.
 

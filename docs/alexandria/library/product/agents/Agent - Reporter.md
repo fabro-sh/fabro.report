@@ -4,6 +4,8 @@
 
 A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro dump --upload` (or `fabro upload` against a previously-dumped tarball) to upload a Debug Bundle to `fabro.report` so the Fabro team can retrieve it. The Reporter has no identity on this service — no account, no login, no user record — and is identified only by the Fabro version captured as metadata at upload time. Their entire interaction with the service is the Fabro CLI's dump-and-upload flow: one command (or two, if they chose to dump and upload separately), one Debug Bundle upload, one short URL returned on stdout, and whatever CLI flags they chose to pass. They may optionally visit the Report Metadata Page at that URL, but nothing obliges them to. The Reporter's goal is simple and time-bounded: get the Debug Bundle to the Fabro team, get the URL into the right place (GitHub issue, Slack, email), and get back to the work the bug interrupted.
 
+**Reporter is the role for the Debug Bundle flow only.** The parallel role for the Feedback flow is the Feedback Submitter (manifest A15, to be drafted in Phase 3 of the 2026-04-23 feedback-scope cascade — plain-text forward reference; no wikilink until the card exists). The two roles share the same audience — self-hosted Fabro users — and a given human being might, at different moments, be both (running `fabro dump --upload` in one moment and `fabro feedback` in another), but the *roles* are distinct and must not be conflated. The Reporter's identity model is no-identity-beyond-Fabro-version-metadata and their post-upload surface is the capability URL (Report Metadata Page + delete action); the Feedback Submitter's identity model is optional-email-plus-server-logged-IP and their post-submission surface is nothing (fire-and-forget — no URL, no page, no delete). See [[Standard - Noun Vocabulary]] Usage Rule 7 and the Feedback Submitter / Reporter anti-examples for the canonical shape of the distinction.
+
 ## WHERE: Ecosystem
 
 - Identity and vocabulary:
@@ -30,7 +32,7 @@ A **Reporter** is a self-hosted Fabro user who hit a bug and ran `fabro dump --u
 - UX and mechanism the Reporter experiences:
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the `fabro dump --upload` / `fabro upload` CLI UX specifics (progress indicator, error surface, success output, `--dry-run`) the Reporter actually experiences.
   - [[Standard - Accessibility Policy]] — the accessibility floor for the two surfaces the Reporter touches: CLI `NO_COLOR` support and WCAG 2.2 AA on the Report Metadata Page. A Reporter using a screen reader, operating the terminal without color, or navigating with the keyboard alone must still hit the pickup-point flow cleanly.
-  - [[System - Retention, Storage, and Key Scheme]] — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
+  - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — the mechanism behind the 30-day retention that bounds how long the URL the Reporter shares remains valid.
   - [[System - Service Topology]] — the operational topology the Reporter's request flow traverses: DNS → Fargate for upload coordination and page render; CLI → S3 directly for bundle bytes.
   - [[Decision - Sentry for Service Errors, Not Bundle Processing]] — Reporters never see Sentry. The operational monitoring posture A13 names is invisible to the Reporter's CLI output, the Report Metadata Page, and every other Reporter-facing surface.
 

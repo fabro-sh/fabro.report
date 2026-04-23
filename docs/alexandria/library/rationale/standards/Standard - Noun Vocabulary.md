@@ -30,7 +30,7 @@ The vocabulary grew from five entities to seven on 2026-04-23 when the product e
   - `Component - Feedback` (manifest A16, to be drafted in Phase 3) — uses "Feedback" as its authoritative name. No field may appear on the Component card that is not listed in this Standard's Feedback entry, and the Component card will extend the entry with lifecycle and storage couplings.
   - `System - Feedback Storage & Notification` (manifest A17, to be drafted in Phase 3) — uses "Feedback" for the submission (not "Message," "Submission," "Note") and "Discord channel" as a downstream notification target, not a first-class noun on the service. Discord channel membership / governance is out of scope for this library.
 - Conforming references (each uses these exact terms):
-  - [[System - Retention, Storage, and Key Scheme]] — uses "Debug Bundle" for the tarball (not "Payload," "Archive," "Dump") and "Report" for the upload event with its sidecar metadata; the S3 key scheme and URL shape preserve the canonical vocabulary.
+  - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — uses "Debug Bundle" for the tarball (not "Payload," "Archive," "Dump") and "Report" for the upload event with its sidecar metadata; the S3 key scheme and URL shape preserve the canonical vocabulary.
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the card that owns the CLI UX; inherits the canonical command names from the "Canonical CLI Commands" subsection below and expands them with flags, progress, error, and delete mechanics.
   - [[Standard - Accessibility Policy]] — uses "Report Metadata Page" in heading and `<title>` copy, "Delete Report" on the button, and the canonical nouns in any ARIA labels.
 - Provenance:
@@ -68,7 +68,7 @@ The CLI surface is owned by [[Standard - Interaction Patterns (CLI + Delete)]]. 
 | ------------------------ | --------------------------------------------------------------------------------------------------------- |
 | `fabro dump`             | Produces a Debug Bundle tarball locally. Does not upload.                                                 |
 | `fabro dump --upload`    | Produces a Debug Bundle AND uploads it in one step. Returns the Report URL on success. Reporter's primary path. |
-| `fabro upload`           | Uploads a previously-dumped Debug Bundle tarball. Supports `--dry-run` to verify the upload path without transferring bytes. |
+| `fabro upload`           | Uploads a previously-dumped Debug Bundle tarball. Returns the Report URL on success, like `fabro dump --upload`. Supports `--dry-run` to verify the upload path without transferring bytes. |
 | `fabro feedback`         | Submits Feedback (optional text, optional files, optional `-e`/`--email`) to the service. Fire-and-forget — returns a confirmation, not a URL. Feedback Submitter's only path. Added 2026-04-23. |
 
 The pre-2026-04-23 names `fabro debug` (bundle producer) and `fabro report` (uploader) are **superseded**. The product domain `fabro.report` and the noun "Report" are unchanged — only the verbs a Reporter types changed.
