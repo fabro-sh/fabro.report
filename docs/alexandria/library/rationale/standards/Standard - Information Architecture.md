@@ -35,8 +35,9 @@ The load-bearing phrasing is *the IA is not hierarchical*. There is no root page
   - [[System - Feedback Storage & Notification]] — owns the `/v1/feedback` intake endpoint this Standard names and the absence of any Feedback-facing GET or DELETE endpoint. The mechanism that makes the IA's Feedback-side commitments structurally possible.
   - [[Decision - Fire-and-Forget Feedback]] — the access-model half of the Feedback IA commitment: no URL, no page, no delete because the flow is fire-and-forget from the Submitter's perspective. Paired with this Standard's "no Feedback page, no Feedback listing" statements.
   - [[Decision - IP Logging for Abuse Protection]] — the identity-data-scope Decision that explains why the Feedback Submitter's optional email + server-logged IP do *not* create account pages, login endpoints, or per-user IA surfaces. A18 is the scope guardrail this IA Standard cites for the no-account-pages commitment on the Feedback side.
-- Forward references (not yet drafted):
-  - `Standard - Design System` (manifest C2) — visual direction for the one page the IA serves.
+- Visual direction for the one rendered surface:
+  - [[Standard - Design System (Receipt Page + CLI Output)]] — C2 specifies the visual system (typography, palette, semantic tokens, dark-mode posture, brand-asset rule) the Report Metadata Page is rendered in. The IA names the surface; C2 names how it looks.
+  - [[Standard - Receipt Page Sketch]] — C3 specifies the concrete layout (narrow centered column, three metadata rows, secondary delete affordance, symbol-only footer) the IA's one rendered surface takes. The IA's "no navigation, no hierarchy, no second page" commitment is visible in C3's layout — no header nav, no breadcrumbs, no tab bar.
 
 ## WHY: Rationale
 

@@ -34,6 +34,8 @@ The vocabulary grew from five entities to seven on 2026-04-23 when the product e
   - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — uses "Debug Bundle" for the tarball (not "Payload," "Archive," "Dump") and "Report" for the upload event with its sidecar metadata; the S3 key scheme and URL shape preserve the canonical vocabulary.
   - [[Standard - Interaction Patterns (CLI + Delete)]] — the card that owns the CLI UX; inherits the canonical command names from the "Canonical CLI Commands" subsection below and expands them with flags, progress, error, and delete mechanics.
   - [[Standard - Accessibility Policy]] — uses "Report Metadata Page" in heading and `<title>` copy, "Delete Report" on the button, and the canonical nouns in any ARIA labels.
+  - [[Standard - Design System (Receipt Page + CLI Output)]] — uses "Report Metadata Page" and "Report" exactly in every rendered heading, label, and affordance on the page; the visual system carries canonical names unchanged.
+  - [[Standard - Receipt Page Sketch]] — uses "Report" as the optional section heading, "Delete this Report" as the delete-affordance text, and "Report Metadata Page" as the canonical page name (even when the rendered `<h1>` displays a shorter form per the visual spec).
 - Provenance:
   - `docs/alexandria/alexandria-config.json` → `discovery.confirmed_entities` — authoritative mirror. This card and the config must remain identical by design. Any drift between the two is a defect in one of them; treat this card as authoritative for card-authoring and the config as authoritative for tooling, and reconcile.
 

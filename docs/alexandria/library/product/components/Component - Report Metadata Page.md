@@ -4,7 +4,7 @@
 
 The **Report Metadata Page** is the one-page landing surface served at a Report's URL — the service's *only* rendered surface for the public web. It shows the Report's ID, its upload timestamp, its bundle size, and a delete button. It shows nothing else: no Debug Bundle contents, no Reporter identity (there is none), no Triager-facing data, no navigation, no second page. It is capability-URL-addressed (anyone in possession of the URL sees the same page, with no auth layer; the delete action on the page is authorized solely by URL possession, per [[Decision - Capability URLs over Auth]]). It inherits its tonal register from [[Principle - Minimal Public Surface Feels Calm]] — *efficient and reassured*, calibrated against `bun` — and it exists at all only because the load-bearing pickup-point thesis of [[Product Thesis - Pickup Point, Not Triage Surface]] allows exactly one thin confirmation surface on the web side of the product. This is that surface.
 
-This card is a **structural** Component card, not a visual one. It describes what the page *is* and what it *does*: its content, its behavior, its access model, its tone inheritance. Visual direction — typography, colors, layout, spacing, page chrome — is a separate concern deferred to the blocked `Standard - Design System` (manifest C2, ABSENT source; blocked on visual direction from the product owner). This card states the structure; the visual card will state the appearance; the two together will specify the page. Building the page without the visual card is not a blocker for the structural contract, but the visual choices remain open.
+This card is a **structural** Component card, not a visual one. It describes what the page *is* and what it *does*: its content, its behavior, its access model, its tone inheritance. Visual direction — typography, colors, layout, spacing, page chrome — is deferred to the paired Standards [[Standard - Design System (Receipt Page + CLI Output)]] (the visual system: fonts, palette, semantic tokens, dark-mode-only posture, brand-asset rule) and [[Standard - Receipt Page Sketch]] (the layout: narrow centered column, metadata rows, delete affordance, footer). This card states the structure; C2 and C3 together state the appearance; all three specify the page.
 
 ## WHERE: Ecosystem
 
@@ -35,33 +35,34 @@ This card is a **structural** Component card, not a visual one. It describes wha
   - [[System - Debug Bundle Retention, Storage, and Key Scheme]] — the URL shape this page is served at (`fabro.report/r/<32-hex-chars>`) and the S3 lifecycle mechanism that removes the page from service when a Report expires. Policy is in the Decisions cited above; mechanism is in A5.
   - [[Decision - Service Stack]] — the page is delivered as server-side-rendered HTML. A12 commits the stack to SSR-only; this Component card's content structure is rendered by the Rust service, not by a client-side framework.
   - [[System - Service Topology]] — the operational path a page-render request takes: DNS → Fargate task → (metadata JSON read from S3) → SSR HTML response. A14 names the pieces; this Component card names the content they produce.
-- Forward references (not yet drafted):
-  - `Standard - Design System` (manifest C2) — visual direction for this page: typography, color, layout, spacing, page chrome. **Blocked** on source material from the product owner. This Component card deliberately does not anticipate the visual choices; it states structure, and the visual card will state appearance.
+- Visual direction (paired Standards):
+  - [[Standard - Design System (Receipt Page + CLI Output)]] — C2 specifies the *system* this page is rendered in: typography (Geist + JetBrains Mono), the Fabro-lifted palette, semantic tokens, dark-mode-only posture, brand-asset "never both together" rule, atmosphere-background option, and delete-confirmation accessibility requirements. Unblocks the visual-direction deferral this card previously held open.
+  - [[Standard - Receipt Page Sketch]] — C3 specifies the concrete *shape* of this page: narrow ~500px centered column, three terminal-style metadata rows (ID / Uploaded / Size), secondary text-link delete affordance, symbol-only footer, generous vertical padding. Also specifies the "What The Sketch Doesn't Show" absence list and the expired-and-deleted-both-404 state-page behavior. Paired with C2 — this page is specified only when both are read together.
 
 ## WHY: Rationale
 
 The Report Metadata Page exists because the pickup-point thesis needs exactly one confirmation surface on the web side — the Reporter closes `fabro dump --upload`, pastes the URL somewhere, and wants to be able to click the URL once to confirm the upload really landed and to delete it if they change their mind. Without the page, the Reporter has only the CLI output and the silence of a shared URL; with the page, they have a one-click confirmation that the handoff succeeded and a one-click undo if they need it. That is the load-bearing job of the page: *confirmation of a handoff, with an exit ramp*. Nothing more.
 
-The reason the page is *only* structural and not full-specified in this card is that the visual register is governed by a separate Design System card (C2), which is blocked on product-owner input. Writing this card without visual direction means the structural contract (four elements, no more; URL-possession auth; expired-Reports return not-found) is locked down and ready for implementation, while the appearance remains a separate, open question. Running ahead on appearance before the product owner provides direction would produce a rendered page that silently became the visual precedent; deferring is the correct posture. The deferral is explicit here so a future agent opening this card does not assume the visual direction is in play just because the structure is.
+The reason the page is *only* structural and not full-specified in this card is that the visual register is governed by two paired Standards: [[Standard - Design System (Receipt Page + CLI Output)]] (the system — fonts, palette, tokens, dark-mode posture, brand-asset rule) and [[Standard - Receipt Page Sketch]] (the shape — narrow centered column, metadata rows, delete affordance, footer, absence list). Splitting structure from appearance keeps each card at a reviewable size and puts each concern where a downstream agent would look for it: the structural contract (four elements, no more; URL-possession auth; expired-Reports return not-found) lives here; the visual system lives in C2; the layout lives in C3. All three are needed to specify the page.
 
 The separation between [[Component - Report]] and [[Component - Report Metadata Page]] is the separation between the *entity* and its *rendered view*. A Report exists whether or not anyone ever visits its URL; the Report Metadata Page is the page-shape it takes on when someone does. Collapsing them into one card would hide the distinction between "the thing that lives in storage" and "the thing that is served to a browser," and that distinction matters for the capability-URL model (URL-possession authorizes the page render; it does not authorize the underlying Debug Bundle retrieval, which is an AWS-IAM concern orthogonal to the page).
 
 ## WHEN: Timeline
 
-New rendered surface, no past. Content and structural contract confirmed 2026-04-22 by the product owner in `docs/alexandria/sources/product-vision.md` (L31 "The URL itself resolves to a minimal one-page metadata receipt showing the Report ID, upload timestamp, and bundle size, plus a delete button. It does **not** expose the bundle contents." — and L100 "Report Metadata Page" in Confirmed Entities). Stable. The *visual* direction remains open pending the product owner's Design System input; that decision unblocks `Standard - Design System` (manifest C2), which is where the appearance will be specified.
+New rendered surface, no past. Content and structural contract confirmed 2026-04-22 by the product owner in `docs/alexandria/sources/product-vision.md` (L31 "The URL itself resolves to a minimal one-page metadata receipt showing the Report ID, upload timestamp, and bundle size, plus a delete button. It does **not** expose the bundle contents." — and L100 "Report Metadata Page" in Confirmed Entities). Stable. Visual direction confirmed 2026-04-23 via `docs/alexandria/sources/receipt-page-visual-direction.md` and captured in [[Standard - Design System (Receipt Page + CLI Output)]] (C2) and [[Standard - Receipt Page Sketch]] (C3), unblocking the visual-direction deferral this card previously held open.
 
 ## HOW: Specification
 
 ### What the Page Shows
 
-The Report Metadata Page renders exactly four elements, in the visual arrangement specified by `Standard - Design System` (blocked) and the interaction specifics specified by `Standard - Interaction Patterns (CLI + Delete)` (blocked). Structurally, the four elements are:
+The Report Metadata Page renders exactly four elements, in the visual arrangement specified by [[Standard - Design System (Receipt Page + CLI Output)]] and [[Standard - Receipt Page Sketch]], and the interaction specifics specified by [[Standard - Interaction Patterns (CLI + Delete)]]. Structurally, the four elements are:
 
 1. **Report ID** — the Report's internal identifier, as carried by [[Component - Report]]. Displayed so the Reporter can recognize the Report they just uploaded, and so a Triager can read it off the page and use it to locate the Debug Bundle in S3. The Report ID is not rendered as a clickable link to anything; it is a label on the page.
-2. **Upload timestamp** — the moment of successful upload, per [[Component - Report]]. Displayed in a format the Reporter can read (exact format deferred to the Design System card). Not editable.
-3. **Bundle size** — the byte size of the uploaded Debug Bundle, per [[Component - Report]]. Displayed in a human-readable unit (exact format deferred to the Design System card). Not editable.
-4. **Delete button** — triggers the delete action authorized by URL possession. Copy on the button and the confirmation flow around it is deferred to [[Standard - Interaction Patterns (CLI + Delete)]], with the tonal register inherited from [[Principle - Minimal Public Surface Feels Calm]] and the accessibility floor from [[Standard - Accessibility Policy]].
+2. **Upload timestamp** — the moment of successful upload, per [[Component - Report]]. Displayed in a format the Reporter can read (recommended default ISO 8601 UTC per [[Standard - Receipt Page Sketch]]). Not editable.
+3. **Bundle size** — the byte size of the uploaded Debug Bundle, per [[Component - Report]]. Displayed in a human-readable unit (recommended default decimal `2.3 MB` per [[Standard - Receipt Page Sketch]]). Not editable.
+4. **Delete button** — triggers the delete action authorized by URL possession. Copy on the button and the confirmation flow around it is deferred to [[Standard - Interaction Patterns (CLI + Delete)]], with the tonal register inherited from [[Principle - Minimal Public Surface Feels Calm]], the accessibility floor from [[Standard - Accessibility Policy]], and the affordance shape (secondary text-link, not a big red button) from [[Standard - Receipt Page Sketch]].
 
-No other elements appear on the page. There is no navigation, no footer links beyond what the Design System card may specify for compliance or legal (that is a C2 question), no breadcrumbs, no related-Reports list, no "your other uploads" list.
+No other elements appear on the page. There is no navigation, no footer links beyond the symbol-only footer specified by [[Standard - Receipt Page Sketch]], no breadcrumbs, no related-Reports list, no "your other uploads" list.
 
 ### What the Page Does Not Show
 
@@ -110,19 +111,20 @@ Tone consistency between the CLI (which carries the same register) and this page
 - **Wrong:** Replacing the delete button with a "request deletion" flow that involves email verification or a team workflow. URL-possession authorizes deletion directly; a verification step is a hybrid-auth shape that [[Decision - Capability URLs over Auth]] rejected as Option C.
 - **Wrong:** Serving a branded "expired Report" page or a "this was deleted" tombstone. Expired and deleted Reports return not-found — there is no rendered expired state. See "Expired-Report Behavior" above.
 - **Wrong:** Rendering the page in a starker or warmer register than the CLI. Tone is inherited from [[Principle - Minimal Public Surface Feels Calm]]; the page and the CLI match or one of them is drifting.
-- **Wrong:** Adding a visual direction ("let's make it dark-mode and monospace") to this card rather than to `Standard - Design System`. Visual direction is C2's concern. This card is deliberately visually silent.
+- **Wrong:** Adding a visual direction ("let's make it dark-mode and monospace") to this card rather than to [[Standard - Design System (Receipt Page + CLI Output)]] or [[Standard - Receipt Page Sketch]]. Visual direction is C2's concern; layout direction is C3's concern. This card is deliberately visually silent.
 
 ### Deferred to Other Cards
 
-- **Visual direction** — `Standard - Design System` (manifest C2). Typography, color, layout, spacing, page chrome. Blocked on product-owner input.
+- **Visual system** — [[Standard - Design System (Receipt Page + CLI Output)]]. Typography (Geist + JetBrains Mono), palette and semantic tokens (lifted from Fabro), dark-mode-only posture, brand-asset rule, atmosphere-background option, delete-confirmation accessibility.
+- **Visual layout** — [[Standard - Receipt Page Sketch]]. Narrow ~500px centered column, three metadata rows, secondary text-link delete affordance, symbol-only footer, absence list, generic-404 state pages.
 - **Delete confirmation flow** — [[Standard - Interaction Patterns (CLI + Delete)]]. Client-side confirmation; authorization by URL possession; register inherited from [[Principle - Minimal Public Surface Feels Calm]].
 - **Accessibility** — [[Standard - Accessibility Policy]]. WCAG 2.2 AA, keyboard-first operation, semantic HTML, screen-reader behavior, focus handling on the delete confirmation.
 - **URL shape** — [[System - Debug Bundle Retention, Storage, and Key Scheme]]. `fabro.report/r/<32-hex-chars>`, 128 bits of entropy, served from a per-Report S3 prefix.
 
-The structural contract in this card is sufficient for a Conan review of the page's shape. Implementation requires the deferred cards to resolve first, or interim decisions from the product owner.
+The structural contract in this card, paired with C2 and C3, is sufficient for implementation. The `/ui` skill is the recommended implementation tool — see [[Standard - Accessibility Policy]].
 
 ## Sources
 
 - `docs/alexandria/sources/product-vision.md` (L31 receipt page description — "a minimal one-page metadata receipt showing the Report ID, upload timestamp, and bundle size, plus a delete button. It does **not** expose the bundle contents."; L66–L72 Security Model — capability-URL access; L100 Confirmed Entities → Report Metadata Page)
 - `docs/alexandria/alexandria-config.json` (`discovery.confirmed_entities` → Report Metadata Page)
-- `docs/alexandria/inventory/card-manifest.md` (A4 entry; visual direction deferral to C2 noted explicitly in the manifest's Source Gaps section)
+- `docs/alexandria/inventory/card-manifest.md` (A4 entry; visual direction deferral to C2 resolved 2026-04-23 in the Source Gaps section)

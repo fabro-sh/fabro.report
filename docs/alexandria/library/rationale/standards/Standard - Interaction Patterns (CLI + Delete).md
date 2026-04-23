@@ -33,6 +33,9 @@ The **interaction-pattern spec** for the surfaces a Reporter and a Feedback Subm
   - [[Decision - No Content Dedup]] — the CLI does **not** hash the Debug Bundle and check for a prior upload before sending. A Reporter who uploads the same tarball twice produces two Reports with two URLs; the service does not notice. This Standard enforces that posture by not adding a pre-upload content-check step.
 - Paired accessibility floor:
   - [[Standard - Accessibility Policy]] — `NO_COLOR` support on the CLI and WCAG 2.2 AA + keyboard-first operation on the Report Metadata Page. This Standard names `NO_COLOR`-awareness as a mechanic; A8 binds it to the accessibility floor and specifies the full keyboard-and-screen-reader shape of the delete confirmation.
+- Visual direction for the delete affordance (paired Standards):
+  - [[Standard - Design System (Receipt Page + CLI Output)]] — C2 specifies the visual system (fonts, palette, semantic tokens, `--color-coral` for destructive framing in the confirmation dialog, `--color-focus` for the keyboard focus ring) this Standard's delete interaction is rendered in. C2 also owns the delete-confirmation accessibility requirements that pair with the mechanics here.
+  - [[Standard - Receipt Page Sketch]] — C3 specifies the delete-affordance *shape* (secondary text-link, not a big red button) placed below the metadata rows. This Standard owns the delete *mechanics* (client-side confirmation, URL-possession authorization); C3 owns the *affordance shape* the mechanics attach to.
 - Forward references (not yet drafted):
   - `Standard - CLI Copy` (not in manifest; referenced as the future home for exact strings) — exact success lines, exact error wording, exact progress-bar character set. This Standard specifies the *register*; wording is downstream.
 - Source provenance:

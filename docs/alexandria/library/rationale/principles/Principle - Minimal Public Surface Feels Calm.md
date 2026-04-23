@@ -34,6 +34,8 @@ The tone register is **warm / conversational**, calibrated against the `bun` CLI
 - Surfaces governed:
   - [[Standard - Interaction Patterns (CLI + Delete)]] — progress indicator shape, delete confirmation flow, error-register specifics. Must render the register this Principle specifies; A7 is the concrete expression of "efficient and reassured" at the interaction-mechanic layer.
   - [[Standard - Accessibility Policy]] — screen reader behavior, `NO_COLOR` support, color contrast. Tone choices that depend on color or symbols must degrade gracefully; the register survives accessibility accommodations precisely because it is carried by word choice rather than color.
+  - [[Standard - Design System (Receipt Page + CLI Output)]] — visual register for the Report Metadata Page. The calm tone must not contradict the visual system; C2 cross-references this Principle for CLI-output register and inherits the "warm but not loud" visual calibration implied by this Principle.
+  - [[Standard - Receipt Page Sketch]] — layout expression of the calm register: breathing room, left-aligned metadata rows, secondary delete affordance. A layout that crammed the three metadata rows together would read efficient-but-not-reassured, violating this Principle at the layout layer.
 - Forward references (not yet drafted):
   - `Standard - CLI Copy` or equivalent product-layer spec for exact success / error / progress strings. Exact strings are downstream; the register they must match lives here.
 
