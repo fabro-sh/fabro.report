@@ -19,6 +19,9 @@ The load-bearing phrasing is *Sentry-for-service-errors is yes; Sentry-as-bundle
 - Referenced by:
   - [[Agent - Reporter]] — Reporters never see Sentry. No Sentry telemetry captures Reporter identity (Reporters have no identity — [[Decision - Capability URLs over Auth]]); no Sentry event is rendered to the Reporter; the CLI output register ([[Principle - Minimal Public Surface Feels Calm]]) is not affected by this Decision. The Reporter-facing surface is unchanged.
   - [[Standard - Noun Vocabulary]] — "Debug Bundle" remains an opaque tarball under this Decision. Nothing in this Decision parses, inspects, or describes bundle contents. The Noun Vocabulary is unaffected; no new user-facing term is introduced.
+  - [[System - Feedback Storage & Notification]] — the 2026-04-23 scope expansion extended this Decision's "service errors, not bundle processing" boundary to cover Feedback flow service errors too: Sentry captures `POST /v1/feedback` failures, S3 write errors, and Discord webhook failures (after the failure-self-reporting retry also fails). Feedback contents are opaque to Sentry in the same sense Debug Bundle contents are opaque.
+  - [[Decision - IP Logging for Abuse Protection]] — A18 cites this Decision in shape-parallel form: both cards carve a narrow, defensible use for a field or tool that would otherwise naturally expand (Sentry for service errors only; IP for abuse protection only). Both pair with [[Principle - Strategy Support Effectiveness for Self-Hosted Users]]'s anti-goals as the upstream scope discipline.
+  - [[Decision - Fire-and-Forget Feedback]] — A19's observability boundary: Sentry context respects the fire-and-forget posture. A `POST /v1/feedback` failure that emits Sentry does not surface a Sentry event ID to the Feedback Submitter; the CLI's failure output stays in the [[Principle - Minimal Public Surface Feels Calm]] register, not a Sentry-linked shape.
 
 ## WHY: Rationale
 

@@ -25,6 +25,8 @@ The load-bearing phrasing is *AWS-native by construction, not by coincidence*. T
   - [[Standard - Interaction Patterns (CLI + Delete)]] — A7's presigned-S3-URL upload architecture is coherent only because the compute and the storage live in the same cloud under a shared IAM boundary. A Fly-deployed service minting presigned URLs for AWS S3 would work, but the IAM posture would be worse; this Decision is the operational-architecture commitment A7's upload flow rests on.
   - [[Standard - Accessibility Policy]] — A8's web accessibility floor is for the server-rendered HTML that this stack produces. The "SSR, no SPA" piece of this Decision is what makes the accessibility floor structurally cheap: there is no client-side rendering pipeline to audit beyond the delete-confirmation JavaScript.
   - [[Component - Report Metadata Page]] — the page is delivered as server-side-rendered HTML. The rendering posture lives on this card; the page content lives on A4.
+  - [[System - Feedback Storage & Notification]] — A17's `POST /v1/feedback` endpoint runs on the Rust-on-Fargate stack this Decision chose; the AWS-native IAM path that lets the Fargate task write to S3 is the same path A5 uses, extended to the `feedback/` prefix. Discord egress is standard HTTPS, requires no stack property beyond outbound network access.
+  - [[Decision - Fire-and-Forget Feedback]] — A19's fire-and-forget commitment has no coupling to the stack beyond the general property that the service's code determines its surface. The stack neither enables nor prevents fire-and-forget; A19 is implemented by the Rust code on this stack choosing not to implement the contrary routes.
 
 ## WHY: Rationale
 

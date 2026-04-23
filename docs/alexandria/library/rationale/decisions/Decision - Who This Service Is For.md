@@ -25,6 +25,9 @@ The load-bearing phrasing is *self-hosted, primary and only*. "Self-hosted" name
   - [[Agent - Triager]] — the Triager's retrieval model (own AWS credentials, direct S3 access) is also tied to the self-hosted audience shape; widening the Triager definition (e.g., to third-party support partners, or to hosted-Fabro team members) is an audience change under this Decision.
   - [[Standard - Competitive Context]] — the competitive-analysis one-pager scopes comparisons to the self-hosted-Fabro-user audience named here; adjacent products serving different populations (managed offerings, crash-report SaaS, file-sharing services) are structurally unhelpful comparisons because their optimization targets differ.
   - [[Decision - Service Stack]] — the stack is chosen to fit the self-hosted audience's realistic traffic profile (single-task Fargate, single-region default); an audience change under this Decision is one of the conditions A12 names as triggering a revisit.
+  - [[Agent - Feedback Submitter]] — added 2026-04-23 when the product scope expanded to two intake types. Feedback Submitters are drawn from the same self-hosted-Fabro-user audience this Decision locks; an audience change here would cascade to the Feedback Submitter persona as well as the Reporter.
+  - [[Decision - IP Logging for Abuse Protection]] — A18 inherits the audience shape; logging the IP on `POST /v1/feedback` is calibrated to self-hosted Fabro users submitting from their own networks. An audience change under this Decision is one of the conditions A18 names as triggering a revisit.
+  - [[Decision - Fire-and-Forget Feedback]] — A19 inherits the audience shape; the fire-and-forget access model is calibrated to self-hosted users who want to send voice without ongoing service engagement. An audience change could shift the access-model defaults and would revisit A19 alongside C4 and A9.
 
 ## WHY: Rationale
 

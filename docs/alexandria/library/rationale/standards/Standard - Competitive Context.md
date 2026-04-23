@@ -18,6 +18,9 @@
   - [[Standard - Noun Vocabulary]] — the not-borrowed list in this Standard uses the canonical nouns (Report, Debug Bundle, Reporter, Triager, Report Metadata Page) to name exactly what `fabro.report` will not import from `bun.report` or adjacent categories. Vocabulary drift into `bun.report`'s nouns ("Crash Report," "Stack Trace," "Feedback Form") is one of the earliest drift symptoms F2 calls out; this Standard inherits that vocabulary commitment.
 - Audience commitment:
   - [[Decision - Who This Service Is For]] — the audience is self-hosted Fabro users, primary and only. This scopes the competitive-analysis question: comparisons to products serving different populations (managed offerings, crash-report SaaS, file-sharing services) are structurally unhelpful because their optimization targets differ.
+- Feedback-flow template borrowing (added 2026-04-23):
+  - [[Agent - Feedback Submitter]] — the Feedback Submitter persona runs the `fabro feedback` CLI whose shape is borrowed from `bun feedback` per the "What Is Borrowed From `bun feedback`" subsection below. The borrowing stops at intake; everything downstream (fire-and-forget semantics, UUIDv7 ID, no-URL commitment) is specific to `fabro.report`.
+  - [[System - Feedback Storage & Notification]] — A17's Discord webhook post shape references `bun feedback`'s `sendToDiscord` implementation as a pattern for the component-v2 payload, which this Standard names as a permitted pattern reference. The drift rejection on everything past intake still holds.
 
 ## WHY: Rationale
 
@@ -37,7 +40,7 @@ Written 2026-04-22 per Conan's inventory recommendation (Open Flag 3 in `docs/al
 
 ### What Is Borrowed From `bun feedback`
 
-- **The CLI-intake shape for the Feedback flow.** Added 2026-04-23 when the product expanded to two intake types. `bun feedback` — the parallel feedback command in the `bun` CLI — is the template shape for `fabro feedback`: a subcommand that accepts positional text or files or piped stdin, an optional `-e, --email <email>` flag, a fire-and-forget confirmation on success, and no post-submission surface. The borrowing is at the same layer as the `bun.report` borrowing: the **intake shape** only, nothing downstream. `bun feedback`'s internal `sendToDiscord` implementation is a pattern reference for the Discord webhook post shape in `System - Feedback Storage & Notification` (manifest A17, to be drafted in Phase 3), but the drift rejection on everything past intake still holds.
+- **The CLI-intake shape for the Feedback flow.** Added 2026-04-23 when the product expanded to two intake types. `bun feedback` — the parallel feedback command in the `bun` CLI — is the template shape for `fabro feedback`: a subcommand that accepts positional text or files or piped stdin, an optional `-e, --email <email>` flag, a fire-and-forget confirmation on success, and no post-submission surface. The borrowing is at the same layer as the `bun.report` borrowing: the **intake shape** only, nothing downstream. `bun feedback`'s internal `sendToDiscord` implementation is a pattern reference for the Discord webhook post shape in [[System - Feedback Storage & Notification]], but the drift rejection on everything past intake still holds.
 
 ### What Is Not Borrowed From `bun.report`
 

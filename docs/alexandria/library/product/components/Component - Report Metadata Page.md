@@ -12,6 +12,8 @@ This card is a **structural** Component card, not a visual one. It describes wha
   - [[Standard - Noun Vocabulary]] — the authoritative **Report Metadata Page** definition ("the minimal one-page landing page at a Report's URL. Shows Report ID, upload timestamp, bundle size, and a delete button. Does not expose contents.") lives there; this Component card is its structural expansion. The Standard's prohibition against shortening the name (no "Metadata Page," "Receipt Page," "Landing Page," "Status Page," "Dashboard") applies to every card, CLI string, and log line that refers to this Component.
 - Entity rendered:
   - [[Component - Report]] — the Report is the entity whose fields this page renders. The page displays three fields (ID, upload timestamp, bundle size) out of the Report's authoritative field list; the other fields exist for internal and Triager use, not for Reporter-facing display.
+- Counterpart entity (no rendered surface):
+  - [[Component - Feedback]] — the parallel first-class entity for the Feedback flow. Feedback has **no** Report-Metadata-Page-equivalent — no rendered page, no URL, no receipt surface — because the Feedback flow is fire-and-forget (per [[Decision - Fire-and-Forget Feedback]]). A16 cites this card's existence to mark the asymmetry between the two flows at the rendered-surface layer: Debug Bundle has exactly one page; Feedback has none.
 - Access model:
   - [[Decision - Capability URLs over Auth]] — the page is rendered on any request to the URL that can reach it, regardless of who is requesting. There is no login, no session cookie, no access-check step beyond URL possession. The delete action on the page is authorized by URL possession alone; no second factor exists or will be added.
 - Retention:
