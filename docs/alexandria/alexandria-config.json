@@ -89,5 +89,10 @@
     "retention": "30-day default expiration.",
     "dedup": "Disabled by design — bundles expire anyway.",
     "headless_caveat": "User described this as 'headless' but confirmed a minimal 1-page metadata receipt exists at each Report URL. Effectively near-headless, not literally."
+  },
+  "implementation_planning": {
+    "ticket_format": "standard",
+    "custom_template": null,
+    "output_dir": "docs/alexandria/implementation-plans"
   }
 }
