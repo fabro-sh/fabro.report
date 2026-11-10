@@ -1,2 +1,5 @@
 .claude/plugins/alexandria/
 .obsidian
+
+# AI-generated artifacts stay local.
+/.ai/
